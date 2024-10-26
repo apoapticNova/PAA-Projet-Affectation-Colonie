@@ -42,10 +42,11 @@ public class Colonie {
 	 * @param	taille la taille de la colonie
 	 * @throws	IllegalArgumentException si la taille est négative
 	 */
-	public Colonie(int taille) throws IllegalArgumentException {
+	public Colonie(int taille) throws Exception {
 		if (taille < 0) {
 			throw new IllegalArgumentException("Taille initiale de colonie invalide : " + taille);
 		}
+		
 		
 		this.taille = taille;
 		this.affectation = new ArrayList<Colon>(); //Colonie initialisée sans affectation
@@ -159,6 +160,7 @@ public class Colonie {
 	 * Cette classe interne implémente les attributs et classes nécessaires pour définir
 	 * un membre d'une {@code Colonie}.
 	 */
+	
 	public class Colon {
 		
 		private String nom;
@@ -192,8 +194,22 @@ public class Colonie {
 		public boolean equals(Object o) {
 			return o == this;
 		}
+		/**
+		 * @return les preferences du colon suivi d'un espace
+		 */
 		public String toString() {
-			return nom+preferences.toString();
+			StringBuffer sB = new StringBuffer();
+			sB.append(nom);
+			for(int elem : preferences)
+			{
+				sB.append(" ");
+				sB.append(elem);
+			}
+			return sB.toString();
+			
+			
+			
+			
 		}
 		
 		
