@@ -26,13 +26,15 @@ public class GestionColonie {
 	 * @param saisie
 	 * @throws Exception
 	 */
-	public static void ajouterNbColons(Scanner saisie) throws Exception 
+	public void ajouterNbColons(Scanner saisie) throws Exception 
 	{
 		System.out.println("Saisir la taille de la colonie \n(Attention pour cette premiere version la capacité maximale est de 26 colons): ");
 		
 		int n = saisie.nextInt();
 		if(n<=0)
 			throw new Exception("Taille de la colonie ne peut pas être nulle/négative.");
+		
+		this.colonie.setTaille(n);
 	}
 	
 }

@@ -63,6 +63,10 @@ public class Colonie {
 		}
 		
 	}
+	public void setTaille(int n)
+	{
+		this.taille = n;
+	}
 	
 	/**
 	 * Ajoute les instances de {@code Colon} en tant que clés dans l'attribut {@code relations}
