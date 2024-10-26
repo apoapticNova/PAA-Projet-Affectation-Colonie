@@ -42,7 +42,7 @@ public class Colonie {
 	 * @param	taille la taille de la colonie
 	 * @throws	IllegalArgumentException si la taille est négative
 	 */
-	public Colonie(int taille) throws Exception {
+	public Colonie(int taille) throws IllegalArgumentException { //Les throws doivent être les plus précis possibles
 		if (taille < 0) {
 			throw new IllegalArgumentException("Taille initiale de colonie invalide : " + taille);
 		}
@@ -194,24 +194,19 @@ public class Colonie {
 		public boolean equals(Object o) {
 			return o == this;
 		}
+		
 		/**
 		 * @return les preferences du colon suivi d'un espace
 		 */
-		public String toString() {
+		public String toString() { 
+			//retournait nom+preferences.toString() equivalait à Colon[r1,r2,...], c'était plus lisible...
 			StringBuffer sB = new StringBuffer();
 			sB.append(nom);
-			for(int elem : preferences)
-			{
+			for (int elem : preferences) {
 				sB.append(" ");
 				sB.append(elem);
 			}
 			return sB.toString();
-			
-			
-			
-			
 		}
-		
-		
 	}
 }
