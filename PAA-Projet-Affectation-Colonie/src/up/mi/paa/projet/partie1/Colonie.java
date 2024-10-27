@@ -49,9 +49,8 @@ public class Colonie {
 		
 		
 		this.taille = taille;
-		this.affectation = new ArrayList<Colon>(); //Colonie initialisée sans affectation
+		this.affectation = new ArrayList<Colon>(); 
 		
-		//initialisation du graphe des relations (liste d'adjacence)
 		this.relations = new HashMap<Colon, HashSet<Colon>>();
 		if (this.taille <= 26) {
 			creerColonsAlphabet();
@@ -63,6 +62,12 @@ public class Colonie {
 		}
 		
 	}
+	/**
+	 * Permet de set la taille
+	 * 
+	 * 
+	 * @param n
+	 */
 	public void setTaille(int n)
 	{
 		this.taille = n;
@@ -202,8 +207,10 @@ public class Colonie {
 		/**
 		 * @return les preferences du colon suivi d'un espace
 		 */
+		@Override
 		public String toString() { 
 			//retournait nom+preferences.toString() equivalait à Colon[r1,r2,...], c'était plus lisible...
+			//Sauf que le prof a demandé à faire A 1 2 3 et non pas Colon[.......
 			StringBuffer sB = new StringBuffer();
 			sB.append(nom);
 			for (int elem : preferences) {
