@@ -18,15 +18,19 @@ public class GestionColonie {
 	
 	public GestionColonie(Scanner sc)
 	{
-		this.colonie = new Colonie(nbColons(sc));
+		this.colonie = new Colonie(saisieTailleColonie(sc));
 	}
 	
 	public Colonie getColonie()
 	{	return this.colonie;
 	}
-	public static void affichageMenu()
+	public static void affichageDebut()
 	{
-		System.out.println("1) Ajouter une relation entre deux colons;"
+		System.out.println("********Partage de biens d'une colonie spatiale********\n");
+	}
+	public static void affichageMenu1()
+	{
+		System.out.println("\n1) Ajouter une relation entre deux colons;"
 				+ "\n2) Ajouter les preferences d'un colon;"
 				+ "\n3) Fin.");
 	}
@@ -38,7 +42,7 @@ public class GestionColonie {
 	 * 
 	 * @param saisie un Scanner
 	 */
-	public static int nbColons(Scanner saisie) 
+	public static int saisieTailleColonie(Scanner saisie) 
 	{
 		int n = -1; 
 		while(n<=0)
@@ -55,18 +59,83 @@ public class GestionColonie {
 				}
 			}catch(InputMismatchException erreur)
 			{
-				System.err.println("Attention. Saisir un nombre entier");
+				System.err.println("Attention. Saisir un nombre entier.");
 				saisie.next();
 			}
 		}	
 		return n;
+	}
+	/**
+	 * Retourne le choix de l'utilisateur.
+	 * 
+	 * @param saisie
+	 * @return int 
+	 */
+	public static int saisieChoixMenu1(Scanner saisie)
+	{
+		int choix = -1;
+		while(choix<=0 || choix>=4)
+		{
+			System.out.println("\nSaisir votre choix parmi (1-3): ");
+			affichageMenu1();
+			try {
+				choix = saisie.nextInt();
+				if(choix<=0 || choix>=4)
+				{
+					System.err.println("Attention. Choix saisi non valide.");
+				}
+			}catch(InputMismatchException erreur)
+			{
+				System.err.println("Attention. Saisir un nombre entier.");
+				saisie.next();
+			}
 		}
+		return choix;
+	}
 	/**
 	 * Retourne les infiormations de la colonie sur sa gestion et les differentes modifications réalisées par l'user.
 	 * 
 	 * @return une chaine de caractere donannt des infromations sur la colonie et les derniers mouvements.
 	 * 
 	 */
+	
+	public boolean gestionColonie(Scanner saisie)
+	{
+		int choix = -1;
+		boolean processus = true;
+		while(processus)
+		{
+			choix = saisieChoixMenu1(saisie);
+			switch(choix)
+			{
+			case 1:
+			{
+				//A enlever 
+				System.out.println("\nAjout de relations entre 2 colons: ");
+				//TODO
+				break;
+			}
+			case 2:
+			{
+				//A enlever 
+				System.out.println("\nAjout de preferences à un colon: ");
+				//TODO
+				break;
+			}
+			case 3: 
+			{
+				System.out.println("Sortie du programme.");
+				processus = false;
+				break;
+			}
+			default:
+			{
+				break;
+			}
+			}
+		}
+		return true;
+	}
 	@Override
 	public String toString()
 	{
@@ -84,10 +153,11 @@ public class GestionColonie {
 	 */
 	public static void main(String[]args)
 	{
-		affichageMenu();
+		affichageDebut();
 		Scanner sc = new Scanner(System.in);
 		GestionColonie gC = new GestionColonie(sc);
-		
+		gC.gestionColonie(sc);
+		System.out.println(gC.toString());
 		sc.close();
 	}
 	

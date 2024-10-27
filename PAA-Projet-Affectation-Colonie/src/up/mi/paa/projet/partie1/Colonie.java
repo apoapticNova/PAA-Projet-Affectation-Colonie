@@ -65,7 +65,6 @@ public class Colonie {
 	/**
 	 * Permet de set la taille
 	 * 
-	 * 
 	 * @param n
 	 */
 	public void setTaille(int n)
@@ -165,11 +164,28 @@ public class Colonie {
 	
 	//TODO : méthode pour échanger deux colons
 	
+
+	@Override
+	public String toString()
+	{
+		StringBuffer sb = new StringBuffer();
+		sb.append("Colonie de taille: ");
+		sb.append(this.taille);
+		sb.append("\nListe des colons: ");
+		for(Colon colon : relations.keySet())
+		{
+			sb.append("\n");
+			sb.append(colon.toString());
+			
+			//TODO : relations entre les colons
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * Cette classe interne implémente les attributs et classes nécessaires pour définir
 	 * un membre d'une {@code Colonie}.
 	 */
-	
 	public class Colon {
 		
 		private String nom;
