@@ -47,7 +47,6 @@ public class Colonie {
 			throw new IllegalArgumentException("Taille initiale de colonie invalide : " + taille);
 		}
 		
-		
 		this.taille = taille;
 		this.affectation = new ArrayList<Colon>(); 
 		
@@ -62,15 +61,15 @@ public class Colonie {
 		}
 		
 	}
-	/**
-	 * Permet de set la taille
-	 * 
-	 * @param n
-	 */
-	public void setTaille(int n)
-	{
-		this.taille = n;
-	}
+//	/**
+//	 * 
+//	 * 
+//	 * @param n nouvelle taille
+//	 */
+//	private void setTaille(int n)
+//	{
+//		this.taille = n;
+//	}
 	
 	/**
 	 * Ajoute les instances de {@code Colon} en tant que clés dans l'attribut {@code relations}
@@ -107,8 +106,10 @@ public class Colonie {
 	}
 	
 	/**
-	 * TODO: documenter cette méthode quand elle sera complètement implémentée
+	 * Détermine le cout d'affectation en vérifiant le nombre de colon dont une ou plusieurs
+	 * ressources convoitées ont été affectées à des colons qu'il n'aime pas. 
 	 * 
+	 * @return le cout d'affectation (le nombre de colons jaloux)
 	 * @throws IllegalStateException si {@code taille} ne correspond pas à {@code affectation.size()}
 	 */
 	public int coutAffectation() throws IllegalStateException {
@@ -118,7 +119,25 @@ public class Colonie {
 		if (affectation.size() != this.taille) {
 			throw new IllegalStateException("Ne peut pas calculer le cout d'affectation : " + ((affectation.size() < this.taille)?"ressources non-affectees":"plus de colons que de ressources"));
 		}
-		return -1; // TODO: implémenter le calcul du coût d'affectation
+		
+		int cout = 0;
+		
+		for(Colon colon : relations.keySet()) {
+			boolean estJaloux = false;
+			ArrayList<Integer> preferences = colon.getPreferences();
+			int ressource = affectation.indexOf(colon);
+			for(int i = preferences.indexOf(ressource); i>0; i--) {
+				if (relations.get(colon).contains(affectation.get(preferences.get(i-1)))) {
+					estJaloux = true;
+				}
+			}
+			
+			if (estJaloux) {
+				cout++;
+			}
+		}
+		
+		return cout;
 	}
 	
 	/**
@@ -143,7 +162,7 @@ public class Colonie {
 			// Détection d'exception : on génère un HashSet sur le tas pour s'assurer que
 			// les préférences sont suffisantes en nombre ET uniques
 			if (new HashSet<Integer>(preferences).size() != taille) {
-				throw new IllegalStateException("La liste de preferences pour " + colon.getNom() + "n'est pas complete");
+				throw new IllegalStateException("La liste de preferences pour " + colon.getNom() + " n'est pas complete");
 			}
 			
 			//Pour chaque préférence, on vérifie sa disponibilité
@@ -227,6 +246,7 @@ public class Colonie {
 		public String toString() { 
 			//retournait nom+preferences.toString() equivalait à Colon[r1,r2,...], c'était plus lisible...
 			//Sauf que le prof a demandé à faire A 1 2 3 et non pas Colon[.......
+			//C'est pour l'input ça pas l'affichage
 			StringBuffer sB = new StringBuffer();
 			sB.append(nom);
 			for (int elem : preferences) {
