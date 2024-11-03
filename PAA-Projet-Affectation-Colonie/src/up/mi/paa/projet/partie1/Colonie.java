@@ -3,6 +3,7 @@ package up.mi.paa.projet.partie1;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Implementation d'une colonie spatiale. La classe {@code Colonie} comprend
@@ -42,11 +43,10 @@ public class Colonie {
 	 * @param	taille la taille de la colonie
 	 * @throws	IllegalArgumentException si la taille est négative
 	 */
-	public Colonie(int taille) throws IllegalArgumentException { //Les throws doivent être les plus précis possibles
+	public Colonie(int taille) throws IllegalArgumentException { 
 		if (taille < 0) {
 			throw new IllegalArgumentException("Taille initiale de colonie invalide : " + taille);
 		}
-		
 		
 		this.taille = taille;
 		this.affectation = new ArrayList<Colon>(); 
@@ -84,6 +84,15 @@ public class Colonie {
 			relations.put(new Colon(Character.toString('A'+i)), new HashSet<Colon>());
 		}
 	}
+	/**
+	 * Méthode retourne une Map<Colon, Hashset<Colon>>
+	 * 
+	 * @return les relations de la colonie actuelle. 
+	 */
+	public Map<Colon, HashSet<Colon>> getRelations()
+	{
+		return this.relations;
+	}
 	
 	/**
 	 * Ajoute une relation d'animosité ("ne s'aiment pas") entre deux instances de 
@@ -93,15 +102,25 @@ public class Colonie {
 	 * @param  c1 un {@code Colon}
 	 * @param  c2 un {@code Colon}
 	 * @return vrai si la relation n'existait pas deja avant
-	 * @throws IllegalArgumentException si les deux memes colons sont passés en argument
-	 * @throws IllegalArgumentException si les deux colons ne sont pas dans {@code relations.ketSet()}
+	 * @return faux si la relation entre c1 et c2 Existe deja 
+	 * @throw IllegalargumentException si un des deux/les colons est/sont null c'est à dire non retrouvés
+	 * @throw IllegalArgumentException si les deux memes colons sont passés en argument
+	 * @throw IllegalArgumentException si les deux colons ne sont pas dans {@code relations.ketSet()}
+	 * 
 	 */
 	public boolean ajouterRelation(Colon c1, Colon c2) throws IllegalArgumentException {
+		if (c1 == null || c2 == null) {
+	        throw new IllegalArgumentException("Attention, Erreur: les colons doivent exister dans la colonie.");
+	    }
 		if (c1.equals(c2)) {
-			throw new IllegalArgumentException("Ne peut pas ajouter de relation entre un colon et lui meme");
+			throw new IllegalArgumentException("Attention, Erreur: Ne peut pas ajouter de relation entre un colon et lui meme.");
+		}
+		if (this.relations.get(c1).contains(c2) || this.relations.get(c2).contains(c1))
+		{	System.err.println("Attention, la relation entre "+c1.getNom()+" et "+c2.getNom()+" existe deja...") ;
+		    return false;
 		}
 		if ( !relations.containsKey(c1) || !relations.containsKey(c2)) {
-			throw new IllegalArgumentException("Ne peut pas ajouter de relation entre differentes colonies");
+			throw new IllegalArgumentException("Ne peut pas ajouter de relation entre colonies qui n'existent pas.");
 		}
 		return relations.get(c1).add(c2) && relations.get(c2).add(c1);
 	}
@@ -164,7 +183,13 @@ public class Colonie {
 	
 	//TODO : méthode pour échanger deux colons
 	
-
+    /**
+     * Méthode toString() qui permet de retourner le détail de la colonie actuelle:
+     * Liste des colons
+     * Relations entre colons
+     * 
+     *TODO: preferences des colons à faire
+     */
 	@Override
 	public String toString()
 	{
@@ -174,10 +199,10 @@ public class Colonie {
 		sb.append("\nListe des colons: ");
 		for(Colon colon : relations.keySet())
 		{
-			sb.append("\n");
+			sb.append("\n\n");
 			sb.append(colon.toString());
-			
-			//TODO : relations entre les colons
+			sb.append("\nN'aime pas : ");
+			sb.append(this.relations.get(colon));
 		}
 		return sb.toString();
 	}
@@ -221,12 +246,13 @@ public class Colonie {
 		}
 		
 		/**
+		 * Methode toString() retourne les preferences du colon
+		 * 
 		 * @return les preferences du colon suivi d'un espace
 		 */
 		@Override
 		public String toString() { 
-			//retournait nom+preferences.toString() equivalait à Colon[r1,r2,...], c'était plus lisible...
-			//Sauf que le prof a demandé à faire A 1 2 3 et non pas Colon[.......
+
 			StringBuffer sB = new StringBuffer();
 			sB.append(nom);
 			for (int elem : preferences) {

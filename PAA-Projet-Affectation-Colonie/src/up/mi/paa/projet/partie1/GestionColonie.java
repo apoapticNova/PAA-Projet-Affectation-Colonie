@@ -3,6 +3,8 @@ package up.mi.paa.projet.partie1;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import up.mi.paa.projet.partie1.Colonie.Colon;
+
 /**
  * La classe {@code GestionColonie} permet l'interaction entre l'utilisateur
  * et une instance de la classe {@code Colonie}. 
@@ -93,30 +95,73 @@ public class GestionColonie {
 		return choix;
 	}
 	/**
-	 * Retourne les infiormations de la colonie sur sa gestion et les differentes modifications réalisées par l'user.
+	 * Méthode relationsEntreColons retourne si la methode s'est bien déroulée ou pas
+	 * Elle permet de saisir une relation entre un colon A et un colon B
+	 * Les exceptions sont normalement toutes prises en compte...
 	 * 
-	 * @return une chaine de caractere donannt des infromations sur la colonie et les derniers mouvements.
-	 * 
+	 * @param saisie
+	 * @return vrai ou faux si la methode se passe bien ou pas necessaire pour le switch case principal...
 	 */
-	
+	public boolean relationsEntreColons(Scanner saisie)
+	{
+		boolean val = false;
+		
+		while(!val)
+		{
+			try
+			{
+				Colon colonDepart = null, colonArrivee = null;
+				String colon1, colon2;
+				System.out.println("Saisir le nom du colon de depart: ");
+				colon1 = saisie.next();
+				System.out.println("\nSaisir le nom de l'autre colon, qui ne l'aime pas: ");
+				colon2 = saisie.next();
+				
+				for(Colon c: this.colonie.getRelations().keySet())
+				{
+					if(c.getNom().equals(colon1))
+						colonDepart = c;
+					
+					if(c.getNom().equals(colon2))
+						colonArrivee = c;
+					
+				}
+				
+				val = this.colonie.ajouterRelation(colonDepart, colonArrivee);
+			}catch(Exception e)
+			{
+				System.err.println(e.getMessage());
+				val = false;
+			}
+		}
+		return val;
+		
+	}
+	/**
+	 * Méthode principale qui gere la colonie avec le switch case principal
+	 * 
+	 * @param saisie
+	 * @return vrai/faux 
+	 */
 	public boolean gestionColonie(Scanner saisie)
 	{
 		int choix = -1;
-		boolean processus = true;
+		boolean processus = true, choixReboot = true;
 		while(processus)
 		{
-			choix = saisieChoixMenu1(saisie);
+			try
+			{
+				if(choixReboot)
+					choix = saisieChoixMenu1(saisie);
 			switch(choix)
 			{
-			case 1:
-			{
-				//A enlever 
-				System.out.println("\nAjout de relations entre 2 colons: ");
-				//TODO
-				break;
-			}
-			case 2:
-			{
+				case 1:
+				{
+					choixReboot = this.relationsEntreColons(saisie);
+					break;
+				}
+				case 2:
+				{
 				//A enlever 
 				System.out.println("\nAjout de preferences à un colon: ");
 				//TODO
@@ -133,9 +178,19 @@ public class GestionColonie {
 				break;
 			}
 			}
+			}catch(InputMismatchException e)
+			{
+				
+			}
 		}
 		return true;
 	}
+	/**
+	 * Retourne les infiormations de la colonie sur sa gestion et les differentes modifications réalisées par l'user.
+	 * 
+	 * @return une chaine de caractere donannt des infromations sur la colonie et les derniers mouvements.
+	 * 
+	 */
 	@Override
 	public String toString()
 	{
@@ -149,7 +204,7 @@ public class GestionColonie {
 		return sb.toString();
 	}
 	/**
-	 * main qui permet pour le moment de réaliser les tests. Un main sera de toute façon utilisé pour faire fonctionner l'interface user.
+	 * main provisoire qui permet pour le moment de réaliser les tests. Un main sera de toute façon utilisé pour faire fonctionner l'interface user.
 	 */
 	public static void main(String[]args)
 	{
