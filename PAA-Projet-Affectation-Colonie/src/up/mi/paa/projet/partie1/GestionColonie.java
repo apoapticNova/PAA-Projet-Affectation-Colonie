@@ -180,7 +180,8 @@ public class GestionColonie {
 			}
 			}catch(InputMismatchException e)
 			{
-				
+				System.err.println("Attention. Saisir un nombre entier.");
+				saisie.next();
 			}
 		}
 		return true;
