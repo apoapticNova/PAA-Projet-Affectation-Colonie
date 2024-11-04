@@ -62,15 +62,7 @@ public class Colonie {
 		}
 		
 	}
-//	/**
-//	 * 
-//	 * 
-//	 * @param n nouvelle taille
-//	 */
-//	private void setTaille(int n)
-//	{
-//		this.taille = n;
-//	}
+
 	
 	/**
 	 * Ajoute les instances de {@code Colon} en tant que clés dans l'attribut {@code relations}
@@ -123,6 +115,18 @@ public class Colonie {
 			throw new IllegalArgumentException("Ne peut pas ajouter de relation entre colonies qui n'existent pas.");
 		}
 		return relations.get(c1).add(c2) && relations.get(c2).add(c1);
+	}
+	
+	/**
+	 * 
+	 */
+	
+	public boolean ajouterPreference(Colon c, int objet) throws IllegalArgumentException {
+		if(c == null)
+			throw new IllegalArgumentException("Attention, Erreur: le colon saisi n'existe pas dans la colonie.");
+		if(c.preferences.contains(objet))
+			throw new IllegalArgumentException("Attention , Erreur: un/des meme(s) objet(s) ont ete saisi plus d'une fois!");
+		return c.getPreferences().add(objet);
 	}
 	
 	/**

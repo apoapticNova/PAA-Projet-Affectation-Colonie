@@ -138,6 +138,34 @@ public class GestionColonie {
 		return val;
 		
 	}
+	
+	
+	public boolean preferencesColons(Scanner saisie)
+	{
+		boolean val = false;
+		int cpt = 0;
+		/**
+		 * Saisir les preferences d'un colon
+		 * Ex: A 1 2 3 4 
+		 * Verifier qu'il y a bien exactement n ressources correspondant à n colons 
+		 * 
+		 */
+		while(!val)
+		{
+			try {
+				System.out.println(((cpt ==0) ? "S" : "A nouveau, s")+("aisir le nom du colon: "));
+				String colon;
+				colon = saisie.next();
+				//TODO System.ou
+			}catch(Exception e)
+			{
+				System.err.println(e.getMessage());
+				cpt++;
+				val = false;
+			}
+		}
+		return val;
+	}
 	/**
 	 * Méthode principale qui gere la colonie avec le switch case principal
 	 * 
@@ -165,7 +193,6 @@ public class GestionColonie {
 				case 2:
 				{
 					System.out.println("\nAjout de preferences à un colon: ");
-					// TODO
 					break;
 			    }
 				case 3: 
