@@ -118,7 +118,9 @@ public class Colonie {
 	}
 	
 	/**
+	 * Methode qui permet d'ajouter les preferences d'un colon
 	 * 
+	 * @return boolean (v/f)
 	 */
 	
 	public boolean ajouterPreference(Colon c, int objet) throws IllegalArgumentException {
@@ -207,6 +209,16 @@ public class Colonie {
 	
 	//TODO : méthode pour échanger deux colons
 	
+	/**
+	 * Méthode qui permet de retourner la taille de la colonie.
+	 * 
+	 * @return taille de la colonie
+	 */
+	public int getTaille()
+	{
+		return this.taille;
+	}
+	
     /**
      * Méthode toString() qui permet de retourner le détail de la colonie actuelle:
      * Liste des colons
@@ -225,6 +237,8 @@ public class Colonie {
 		{
 			sb.append("\n\n");
 			sb.append(colon.toString());
+			for(Integer elem: colon.preferences)
+				sb.append(" ").append(elem);
 			sb.append("\nN'aime pas : ");
 			sb.append(this.relations.get(colon));
 		}
@@ -278,10 +292,6 @@ public class Colonie {
 		public String toString() { 
 			StringBuffer sB = new StringBuffer();
 			sB.append(nom);
-			for (int elem : preferences) {
-				sB.append(" ");
-				sB.append(elem);
-			}
 			return sB.toString();
 		}
 	}

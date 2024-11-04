@@ -2,6 +2,7 @@ package up.mi.paa.projet.partie1;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 import up.mi.paa.projet.partie1.Colonie.Colon;
 
@@ -139,7 +140,25 @@ public class GestionColonie {
 		
 	}
 	
+	public String saisiePreference(String colon, Scanner saisie)
+	{
+		
+		System.out.println("Pour colon "+colon +" saisir les preferences suivi d'un espace entre chaque preference."
+				+ "\nExemple : A : 1 2 3.\n Attention il doit y avoir exactement "+this.colonie.getTaille() + " ressources.\n")        ;
+		StringBuffer sb = new StringBuffer();
+		for(int i = 0; i<this.colonie.getTaille(); i++)
+		{
+			sb.append(saisie.next());
+			sb.append(" ");
+		}
 	
+		return sb.toString();		
+	}
+	/**
+	 * TODO commenter et ajouter une exception 
+	 * @param saisie
+	 * @return
+	 */
 	public boolean preferencesColons(Scanner saisie)
 	{
 		boolean val = false;
@@ -152,11 +171,26 @@ public class GestionColonie {
 		 */
 		while(!val)
 		{
-			try {
+			try 
+			{
 				System.out.println(((cpt ==0) ? "S" : "A nouveau, s")+("aisir le nom du colon: "));
-				String colon;
-				colon = saisie.next();
-				//TODO System.ou
+				String nomColon = saisie.next();
+				Colon colon = null;
+				for(Colon c :this.getColonie().getRelations().keySet())
+				{
+					if(c.getNom().equals(nomColon))
+					{
+						colon = c;
+					}
+				}
+				
+			    StringTokenizer token = new StringTokenizer(this.saisiePreference(nomColon, saisie), " ");
+			    while(token.hasMoreElements())
+			    {
+			    	String elem = token.nextToken();
+			    	this.colonie.ajouterPreference(colon, Integer.parseInt(elem));
+			    }
+			    val = true;
 			}catch(Exception e)
 			{
 				System.err.println(e.getMessage());
@@ -192,7 +226,7 @@ public class GestionColonie {
 				}
 				case 2:
 				{
-					System.out.println("\nAjout de preferences à un colon: ");
+					choixReboot = this.preferencesColons(saisie);
 					break;
 			    }
 				case 3: 
