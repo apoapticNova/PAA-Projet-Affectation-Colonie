@@ -198,15 +198,28 @@ public class Colonie {
 		this.affectation = nouvelleAffectation;
 	}
 	
-	//TODO : méthode pour échanger deux colons
+	/**
+	 * Echange l'affectation de deux colons passés en paramètres
+	 * 
+	 * @throws IllegalArgumentException si les deux colons n'ont pas déjà de ressource affectées
+	 */
+	public void echangerRessources(Colon c1, Colon c2) throws IllegalArgumentException {
+		if (!affectation.contains(c1) || !affectation.contains(c2)) {
+			throw new IllegalArgumentException("Ne peut pas faire l'échange : ressource non affectée");
+		}
+		
+		int ressource_c1 = affectation.indexOf(c1);
+		int ressource_c2 = affectation.indexOf(c2);
+		affectation.set(ressource_c1, c2);
+		affectation.set(ressource_c2, c1);
+	}
 	
 	/**
 	 * Méthode qui permet de retourner la taille de la colonie.
 	 * 
 	 * @return taille de la colonie
 	 */
-	public int getTaille()
-	{
+	public int getTaille() {
 		return this.taille;
 	}
 	
@@ -215,7 +228,6 @@ public class Colonie {
      * Liste des colons
      * Relations entre colons
      * 
-     *TODO: preferences des colons à faire
      */
 	@Override
 	public String toString()
@@ -224,14 +236,20 @@ public class Colonie {
 		sb.append("Colonie de taille: ");
 		sb.append(this.taille);
 		sb.append("\nListe des colons: ");
-		for(Colon colon : relations.keySet())
-		{
+		for(Colon colon : relations.keySet()) {
+			//Sauter une ligne
 			sb.append("\n\n");
-			sb.append(colon.toString());
-			for(Integer elem: colon.preferences)
-				sb.append(" ").append(elem);
-			sb.append("\nN'aime pas : ");
-			sb.append(this.relations.get(colon));
+			//Sur une ligne : le nom du colon et ses préférences
+			sb.append(colon.getNom());
+			sb.append("\tpréfère : ");
+			for(Integer ressource : colon.preferences) {
+				sb.append(">").append(ressource); // ">" pour la lisibilité lors d'un affichage
+			}
+			//Sur une ligne : le nom des colons qu'il n'aime pas
+			sb.append("\nN'aime pas :");
+			for (Colon enConflit : relations.get(colon)) {
+				sb.append(" ").append(enConflit.getNom());
+			}
 		}
 		return sb.toString();
 	}
@@ -281,9 +299,13 @@ public class Colonie {
 		 */
 		@Override
 		public String toString() { 
-			StringBuffer sB = new StringBuffer();
-			sB.append(nom);
-			return sB.toString();
+			StringBuffer sb = new StringBuffer();
+			sb.append(nom);
+			for (int ressource : this.preferences) {
+				sb.append(" ");
+				sb.append(ressource);
+			}
+			return sb.toString();
 		}
 	}
 }

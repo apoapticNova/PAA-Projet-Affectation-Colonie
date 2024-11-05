@@ -90,110 +90,96 @@ public class GestionColonie {
 	}
 
 	/**
-
 	 * Méthode relationsEntreColons retourne si la methode s'est bien déroulée ou pas
 	 * Elle permet de saisir une relation entre un colon A et un colon B
 	 * Les exceptions sont normalement toutes prises en compte...
-
-	 * Retourne les infiormations de la colonie sur sa gestion et les differentes
+	 * 
+	 * <p>Retourne les infiormations de la colonie sur sa gestion et les differentes
 	 * modifications réalisées par l'user.
+	 * 
 	 * @param saisie
 	 * @return vrai ou faux si la methode se passe bien ou pas necessaire pour le switch case principal...
 	 * @return une chaine de caractere donannt des infromations sur la colonie et
 	 *         les derniers mouvements.
 	 * 
 	 */
-
-	public boolean relationsEntreColons(Scanner saisie)
-	{
+	public boolean relationsEntreColons(Scanner saisie) {
 		boolean val = false;
-		
-		while(!val)
-		{
-			try
-			{
+
+		while (!val) {
+			try {
 				Colon colonDepart = null, colonArrivee = null;
 				String colon1, colon2;
 				System.out.println("Saisir le nom du colon de depart: ");
 				colon1 = saisie.next();
 				System.out.println("\nSaisir le nom de l'autre colon, qui ne l'aime pas: ");
 				colon2 = saisie.next();
-				
-				for(Colon c: this.colonie.getRelations().keySet())
-				{
-					if(c.getNom().equals(colon1))
+
+				for (Colon c : this.colonie.getRelations().keySet()) {
+					if (c.getNom().equals(colon1))
 						colonDepart = c;
-					
-					if(c.getNom().equals(colon2))
+
+					if (c.getNom().equals(colon2))
 						colonArrivee = c;
-					
+
 				}
-				
+
 				val = this.colonie.ajouterRelation(colonDepart, colonArrivee);
-			}catch(Exception e)
-			{
+			} catch (Exception e) {
 				System.err.println(e.getMessage());
 				val = false;
 			}
 		}
 		return val;
-		
+
 	}
 	
-	public String saisiePreference(String colon, Scanner saisie)
-	{
-		
-		System.out.println("Pour colon "+colon +" saisir les preferences suivi d'un espace entre chaque preference."
-				+ "\nExemple : A : 1 2 3.\n Attention il doit y avoir exactement "+this.colonie.getTaille() + " ressources.\n")        ;
+	public String saisiePreference(String colon, Scanner saisie) {
+
+		System.out.println("Pour colon " + colon + " saisir les preferences suivi d'un espace entre chaque preference."
+				+ "\nExemple : A : 1 2 3.\n Attention il doit y avoir exactement " + this.colonie.getTaille()
+				+ " ressources.\n");
 		StringBuffer sb = new StringBuffer();
-		for(int i = 0; i<this.colonie.getTaille(); i++)
-		{
+		for (int i = 0; i < this.colonie.getTaille(); i++) {
 			sb.append(saisie.next());
 			sb.append(" ");
 		}
-	
-		return sb.toString();		
+
+		return sb.toString();
 	}
+	
 	/**
 	 * TODO commenter et ajouter une exception 
 	 * @param saisie
 	 * @return
 	 */
-	public boolean preferencesColons(Scanner saisie)
-	{
+	public boolean preferencesColons(Scanner saisie) {
 		boolean val = false;
 		int cpt = 0;
 		/**
-		 * Saisir les preferences d'un colon
-		 * Ex: A 1 2 3 4 
-		 * Verifier qu'il y a bien exactement n ressources correspondant à n colons 
+		 * Saisir les preferences d'un colon Ex: A 1 2 3 4 Verifier qu'il y a bien
+		 * exactement n ressources correspondant à n colons
 		 * 
 		 */
-		while(!val)
-		{
-			try 
-			{
-				System.out.println(((cpt ==0) ? "S" : "A nouveau, s")+("aisir le nom du colon: "));
+		while (!val) {
+			try {
+				System.out.println(((cpt == 0) ? "S" : "A nouveau, s") + ("aisir le nom du colon: "));
 				String nomColon = saisie.next();
 				Colon colon = null;
-				for(Colon c :this.getColonie().getRelations().keySet())
-				{
-					if(c.getNom().equals(nomColon))
-					{
+				for (Colon c : this.getColonie().getRelations().keySet()) {
+					if (c.getNom().equals(nomColon)) {
 						colon = c;
 					}
 				}
-				
-			    StringTokenizer token = new StringTokenizer(this.saisiePreference(nomColon, saisie), " ");
-			    while(token.hasMoreElements())
-			    {
-			    	String elem = token.nextToken();
-			    	//TODO fix this
-			    	this.colonie.ajouterPreferences(colon, Integer.parseInt(elem));
-			    }
-			    val = true;
-			}catch(Exception e)
-			{
+
+				StringTokenizer token = new StringTokenizer(this.saisiePreference(nomColon, saisie), " ");
+				while (token.hasMoreElements()) {
+					String elem = token.nextToken();
+					// TODO fix this
+					this.colonie.ajouterPreferences(colon, Integer.parseInt(elem));
+				}
+				val = true;
+			} catch (Exception e) {
 				System.err.println(e.getMessage());
 				cpt++;
 				val = false;
@@ -201,13 +187,13 @@ public class GestionColonie {
 		}
 		return val;
 	}
+	
 	/**
 	 * Méthode principale qui gere la colonie avec le switch case principal
 	 * 
 	 * @param saisie
 	 * @return vrai/faux 
 	 */
-
 	public boolean gestionColonie(Scanner saisie) {
 		int choix = -1;
 
@@ -248,12 +234,12 @@ public class GestionColonie {
 		}
 		return true;
 	}
+	
 	/**
 	 * Retourne les infiormations de la colonie sur sa gestion et les differentes modifications réalisées par l'user.
 	 * 
 	 * @return une chaine de caractere donannt des infromations sur la colonie et les derniers mouvements.
 	 */
-	
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
