@@ -188,7 +188,8 @@ public class GestionColonie {
 			    while(token.hasMoreElements())
 			    {
 			    	String elem = token.nextToken();
-			    	this.colonie.ajouterPreference(colon, Integer.parseInt(elem));
+			    	//TODO fix this
+			    	this.colonie.ajouterPreferences(colon, Integer.parseInt(elem));
 			    }
 			    val = true;
 			}catch(Exception e)

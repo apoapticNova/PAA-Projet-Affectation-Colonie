@@ -3,7 +3,6 @@ package up.mi.paa.projet.partie1;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 /**
  * Implementation d'une colonie spatiale. La classe {@code Colonie} comprend
@@ -76,13 +75,13 @@ public class Colonie {
 			relations.put(new Colon(Character.toString('A'+i)), new HashSet<Colon>());
 		}
 	}
+	
 	/**
-	 * Méthode retourne une Map<Colon, Hashset<Colon>>
+	 * Retourne une HashMap<Colon, Hashset<Colon>>
 	 * 
 	 * @return les relations de la colonie actuelle. 
 	 */
-	public Map<Colon, HashSet<Colon>> getRelations()
-	{
+	public HashMap<Colon, HashSet<Colon>> getRelations() {
 		return this.relations;
 	}
 	
@@ -93,42 +92,34 @@ public class Colonie {
 	 * 
 	 * @param  c1 un {@code Colon}
 	 * @param  c2 un {@code Colon}
-	 * @return vrai si la relation n'existait pas deja avant
-	 * @return faux si la relation entre c1 et c2 Existe deja 
-	 * @throw IllegalargumentException si un des deux/les colons est/sont null c'est à dire non retrouvés
+	 * @return {@code true} si la relation a bien été ajoutée
 	 * @throw IllegalArgumentException si les deux memes colons sont passés en argument
 	 * @throw IllegalArgumentException si les deux colons ne sont pas dans {@code relations.ketSet()}
-	 * 
 	 */
 	public boolean ajouterRelation(Colon c1, Colon c2) throws IllegalArgumentException {
-		if (c1 == null || c2 == null) {
-	        throw new IllegalArgumentException("Attention, Erreur: les colons doivent exister dans la colonie.");
-	    }
 		if (c1.equals(c2)) {
-			throw new IllegalArgumentException("Attention, Erreur: Ne peut pas ajouter de relation entre un colon et lui meme.");
-		}
-		if (this.relations.get(c1).contains(c2) || this.relations.get(c2).contains(c1))
-		{	System.err.println("Attention, la relation entre "+c1.getNom()+" et "+c2.getNom()+" existe deja...") ;
-		    return false;
+			throw new IllegalArgumentException("Ne peut pas ajouter de relation entre un colon et lui meme.");
 		}
 		if ( !relations.containsKey(c1) || !relations.containsKey(c2)) {
-			throw new IllegalArgumentException("Ne peut pas ajouter de relation entre colonies qui n'existent pas.");
+			throw new IllegalArgumentException("Colon n'appartenant pas à la colonie");
 		}
+		
+		// retourne FALSE si l'ajout à échoué (cela inclue quand la relation existe deja)
 		return relations.get(c1).add(c2) && relations.get(c2).add(c1);
 	}
 	
 	/**
-	 * Methode qui permet d'ajouter les preferences d'un colon
+	 * Ajoute les préférences d'un colon
 	 * 
-	 * @return boolean (v/f)
+	 * @param c instance de {@code Colon}
+	 * @param preferences liste des préférences
 	 */
-	
-	public boolean ajouterPreference(Colon c, int objet) throws IllegalArgumentException {
-		if(c == null)
-			throw new IllegalArgumentException("Attention, Erreur: le colon saisi n'existe pas dans la colonie.");
-		if(c.preferences.contains(objet))
-			throw new IllegalArgumentException("Attention , Erreur: un/des meme(s) objet(s) ont ete saisi plus d'une fois!");
-		return c.getPreferences().add(objet);
+	public void ajouterPreferences(Colon c, ArrayList<Integer> preferences) throws IllegalArgumentException {
+		if (!relations.containsKey(c)) {
+			throw new IllegalArgumentException("Le colon ne fait pas partie de cette colonie");
+		}
+		
+		c.setPreferences(preferences);
 	}
 	
 	/**
