@@ -9,6 +9,9 @@ import java.util.Iterator;
  * Implementation d'une colonie spatiale. La classe {@code Colonie} comprend
  * un graphe des relations, une liste d'affectations, une classe interne {@code Colon}
  * et les méthodes nécessaires à la gestion manuelle de la colonie.
+ * 
+ * @author Julie Colliere
+ * @author Zakaria Chaker
  */
 public class Colonie {
 
@@ -221,7 +224,7 @@ public class Colonie {
 	 * @return taille de la colonie
 	 */
 	public int getTaille() {
-		return this.taille;
+		return taille;
 	}
 	
 	/**
@@ -244,6 +247,19 @@ public class Colonie {
 			}
 		}
 		return colon;
+	}
+	/*
+	 * @return true si toutes les listes de préférences sont complètes
+	 */
+	public boolean preferencesCompletes() {
+		boolean preferencesCompletes = true;
+		for(Colon colon : relations.keySet()) {
+			ArrayList<Integer> preferences = colon.getPreferences();
+			if(new HashSet<Integer>(preferences).size() != taille) {
+				preferencesCompletes = false;
+			}
+		}
+		return preferencesCompletes;
 	}
 	
     /**

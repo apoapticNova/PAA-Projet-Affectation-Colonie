@@ -10,6 +10,8 @@ import up.mi.paa.projet.partie1.Colonie.Colon;
  * La classe {@code GestionColonie} permet l'interaction entre l'utilisateur et
  * une instance de la classe {@code Colonie}.
  *
+ * @author Julie Colliere
+ * @author Zakaria Chaker
  */
 public class GestionColonie {
 
@@ -28,8 +30,15 @@ public class GestionColonie {
 	}
 
 	public static void affichageMenu1() {
-		System.out.println("\n1) Ajouter une relation entre deux colons;" + "\n2) Ajouter les preferences d'un colon;"
-				+ "\n3) Fin.");
+		System.out.println("1) Ajouter une relation entre deux colons;");
+		System.out.println("2) Ajouter les preferences d'un colon;");
+		System.out.println("3) Fin.");
+	}
+	
+	public static void affichageMenu2() {
+		System.out.println("1) échanger les ressources de deux colons ;");
+		System.out.println("2) afficher le nombre de colons jaloux ;");
+		System.out.println("3) Fin.");
 	}
 
 	/**
@@ -55,88 +64,152 @@ public class GestionColonie {
 				}
 			} catch (InputMismatchException erreur) {
 				System.err.println("Attention. Saisir un nombre entier.");
-				saisie.next();
+				saisie.nextLine();
 			}
 		}
 		return n;
 	}
 
 	/**
-	 * Retourne le choix de l'utilisateur.
+	 * Propose à l'utilisateur les actions à réaliser pour l'étape 1 de constitution de la colonie
 	 * 
 	 * @param saisie
 	 * @return int
 	 */
-	public static int saisieChoixMenu1(Scanner saisie) {
+	private void menu1(Scanner saisie) {
 		int choix = -1;
-		while (choix <= 0 || choix >= 4) {
+		while (choix != 3) {
+			System.out.println("\nSaisir votre choix parmi (1-3): ");
+			affichageMenu2();
+			try {
+				choix = saisie.nextInt();
+				switch (choix) {
+				case 1:
+					relationsEntreColons(saisie);
+					break;
+
+				case 2:
+					preferencesColons(saisie);
+					break;
+
+				case 3:
+					System.out.println("Fin des modifications de la colonie");
+					break;
+
+				default:
+					System.err.println("Choix invalide !");
+					break;
+
+				}
+			} catch (InputMismatchException e) {
+				System.err.println("Attention. Saisir un nombre entier.");
+				saisie.nextLine();
+			}
+		}
+	}
+	
+	/**
+	 * Propose à l'utilisateur les actions à réaliser pour l'étape 2 de constitution de la colonie
+	 * 
+	 * @param saisie
+	 * @return int
+	 */
+	private void menu2(Scanner saisie) {
+		int choix = -1;
+		while (choix != 3) {
 			System.out.println("\nSaisir votre choix parmi (1-3): ");
 			affichageMenu1();
 			try {
 				choix = saisie.nextInt();
-				if (choix <= 0 || choix >= 4) {
-					System.err.println("Attention. Choix saisi non valide.");
+				switch (choix) {
+				case 1:
+					//choix1
+					break;
+
+				case 2:
+					//choix2
+					break;
+
+				case 3:
+					System.out.println("Sortie du programme");
+					break;
+
+				default:
+					System.err.println("Choix invalide !");
+					break;
+
 				}
-			} catch (InputMismatchException erreur) {
+			} catch (InputMismatchException e) {
 				System.err.println("Attention. Saisir un nombre entier.");
-				saisie.next();
+				saisie.nextLine();
 			}
 		}
-		return choix;
 	}
 
 	/**
 	 * Méthode relationsEntreColons retourne si la methode s'est bien déroulée ou pas
 	 * Elle permet de saisir une relation entre un colon A et un colon B
-	 * Les exceptions sont normalement toutes prises en compte...
 	 * 
 	 * <p>Retourne les infiormations de la colonie sur sa gestion et les differentes
 	 * modifications réalisées par l'user.
 	 * 
 	 * @param saisie
 	 * @return vrai ou faux si la methode se passe bien ou pas necessaire pour le switch case principal...
-	 * @return une chaine de caractere donannt des infromations sur la colonie et
-	 *         les derniers mouvements.
-	 * 
 	 */
-	public boolean relationsEntreColons(Scanner saisie) {
-		boolean val = false;
-
-		while (!val) {
-			try {
-				Colon colonDepart = null, colonArrivee = null;
-				String colon1, colon2;
+	public void relationsEntreColons(Scanner saisie) {
+		try {
+			// Recherche du premier colon
+			Colon colon1 = null;
+			while (colon1 == null) {
 				System.out.println("Saisir le nom du colon de depart: ");
-				colon1 = saisie.next();
-				System.out.println("\nSaisir le nom de l'autre colon, qui ne l'aime pas: ");
-				colon2 = saisie.next();
-
-				for (Colon c : this.colonie.getRelations().keySet()) {
-					if (c.getNom().equals(colon1))
-						colonDepart = c;
-
-					if (c.getNom().equals(colon2))
-						colonArrivee = c;
-
+				String nomColon = saisie.next();
+				colon1 = colonie.chercherColonViaNom(nomColon);
+				if (colon1 == null) {
+					System.err.println("Veuillez saisir un nom valide !");
 				}
-
-				val = this.colonie.ajouterRelation(colonDepart, colonArrivee);
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-				val = false;
 			}
+			// Recherche du deuxième colon
+			Colon colon2 = null;
+			while (colon2 == null) {
+				System.out.println("\nSaisir le nom de l'autre colon, qui ne l'aime pas: ");
+				String nomColon = saisie.next();
+				colon2 = colonie.chercherColonViaNom(nomColon);
+				if (colon2 == null) {
+					System.err.println("Veuillez saisir un nom valide !");
+				}
+			}
+			
+			//Pour arriver ici le programme aura forcément trouvé deux colons dans la même colonie
+			//Le seul cas à considérer est celui où les deux colons sont identiques (si ajouterRelation retourne false)
+			if(colonie.ajouterRelation(colon1, colon2)) {
+				System.out.println("Relation ajoutée !");
+			} else {
+				System.out.println("Cette relation existe déjà");
+			}
+			
+		} catch (InputMismatchException e) {
+			System.err.println(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			System.err.println(e.getMessage());
 		}
-		return val;
-
 	}
 	
+	/**
+	 * Instancie une {@code ArrayList<Integer>} pour une assignation à l'attribut {@code preferences}
+	 * du colon passé en argument de {@code preferencesColons}.
+	 * 
+	 * <p> La méthode s'appuie sur les données entrées par l'utilisateur et ne retournera que
+	 * lorsque les données entrées seront valides. Cette implémentation impose que la liste soit
+	 * complète (cohérente avec la taille de la colonie associée).
+	 */
 	public ArrayList<Integer> saisiePreferences(Scanner saisie) {
 		ArrayList<Integer> preferences = new ArrayList<Integer>();
-		
+		// Saisir les preferences d'un colon Ex: A 1 2 3 4
+		// Verifier qu'il y a bien exactement n ressources correspondant à n colons
 		do {
 			System.out.println("Saisir les preferences dans l'ordre séparées d'un espace. Exemple : 1 2 3");
 			System.out.println("Attention il doit y avoir exactement " + colonie.getTaille() + " ressources.\n");
-			String[] tabPreferences = saisie.next().split(" ", colonie.getTaille()); //StringTokenizer déprécié -> String::split est préféré, on obtient un tableau de String de taille max colonie.taille
+			String[] tabPreferences = saisie.nextLine().split(" ", colonie.getTaille()); //StringTokenizer déprécié -> String::split est préféré, on obtient un tableau de String de taille max colonie.taille
 			if (tabPreferences.length == colonie.getTaille()) {
 				preferences.clear(); // si des mauvaises valeurs ont été entrées à une étape précédente de la boucle, réinitialise la liste
 				try {
@@ -162,74 +235,35 @@ public class GestionColonie {
 	 * @param saisie
 	 * @return
 	 */
-	public boolean preferencesColons(Scanner saisie) {
-		boolean val = false;
-		/**
-		 * Saisir les preferences d'un colon Ex: A 1 2 3 4 Verifier qu'il y a bien
-		 * exactement n ressources correspondant à n colons
-		 * 
-		 */
-		while (!val) {
-			Colon colon = null;
-			while (colon == null) {
-				System.out.println("Saisir le nom du colon :");
-				String nomColon = saisie.next();
-				colon = colonie.chercherColonViaNom(nomColon);
-				if (colon == null) {
-					System.err.println("Veuillez saisir un nom valide !");
-				}
+	public void preferencesColons(Scanner saisie) {
+		//Recherche du colon à modifier
+		Colon colon = null;
+		while (colon == null) {
+			System.out.println("Saisir le nom du colon :");
+			String nomColon = saisie.next();
+			colon = colonie.chercherColonViaNom(nomColon);
+			if (colon == null) {
+				System.err.println("Veuillez saisir un nom valide !");
 			}
-			colonie.ajouterPreferences(colon, saisiePreferences(saisie));
-			val = true;
 		}
-		return val;
+		
+		colonie.ajouterPreferences(colon, saisiePreferences(saisie));
+		System.out.println("Préférences ajoutées pour " + colon.toString());
 	}
 	
 	/**
 	 * Méthode principale qui gere la colonie avec le switch case principal
 	 * 
 	 * @param saisie
-	 * @return vrai/faux 
+	 * @return vrai/faux
 	 */
-	public boolean gestionColonie(Scanner saisie) {
-		int choix = -1;
-
-		boolean processus = true, choixReboot = true;
-		while(processus)
-		{
-			try
-			{
-				if(choixReboot)
-					choix = saisieChoixMenu1(saisie);
-			switch(choix)
-			{
-				case 1:
-				{
-					choixReboot = this.relationsEntreColons(saisie);
-					break;
-				}
-				case 2:
-				{
-					choixReboot = this.preferencesColons(saisie);
-					break;
-			    }
-				case 3: 
-				{
-					System.out.println("Sortie du programme.");
-					processus = false;
-					break;
-				}
-				default: {
-					break;
-				}
-			}
-			}catch(InputMismatchException e)
-			{
-				System.err.println("Attention. Saisir un nombre entier.");
-				saisie.next();
-			}
+	public void gestionColonie(Scanner saisie) {
+		while(!colonie.preferencesCompletes()) {
+			System.out.println("Il reste des préférences à saisir");
+			menu1(saisie);
 		}
-		return true;
+		menu2(saisie);
+
 	}
 	
 	/**
@@ -242,10 +276,6 @@ public class GestionColonie {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Etat actuel de la colonie: \n\n");
 		sb.append(this.colonie.toString());
-		/**
-		 * TODO
-		 * 
-		 */
 		return sb.toString();
 	}
 
