@@ -45,7 +45,7 @@ public class GestionColonie {
 	 * Ajoute le nombre de colons dans la colonie. Verifie le type entré et le
 	 * nombre de colons saisi.
 	 * 
-	 * Pour cette V1, la capcité est limitée à 26.
+	 * Pour cette V1, la capacité est limitée à 26.
 	 * 
 	 * @param saisie un Scanner
 	 */
@@ -80,7 +80,7 @@ public class GestionColonie {
 		int choix = -1;
 		while (choix != 3) {
 			System.out.println("\nSaisir votre choix parmi (1-3): ");
-			affichageMenu2();
+			affichageMenu1();
 			try {
 				choix = saisie.nextInt();
 				switch (choix) {
@@ -118,7 +118,7 @@ public class GestionColonie {
 		int choix = -1;
 		while (choix != 3) {
 			System.out.println("\nSaisir votre choix parmi (1-3): ");
-			affichageMenu1();
+			affichageMenu2();
 			try {
 				choix = saisie.nextInt();
 				switch (choix) {
@@ -150,7 +150,7 @@ public class GestionColonie {
 	 * Méthode relationsEntreColons retourne si la methode s'est bien déroulée ou pas
 	 * Elle permet de saisir une relation entre un colon A et un colon B
 	 * 
-	 * <p>Retourne les infiormations de la colonie sur sa gestion et les differentes
+	 * <p>Retourne les informations de la colonie sur sa gestion et les differentes
 	 * modifications réalisées par l'user.
 	 * 
 	 * @param saisie
@@ -230,10 +230,9 @@ public class GestionColonie {
 	}
 	
 	/**
-	 * TODO commenter et ajouter une exception
+	 * A l'aide des informations entrées par l'utilisateur, trouve un colon, appelle
+	 * {@code saisiePreferences()} pour obtenir une liste de préférences à assigner
 	 * 
-	 * @param saisie
-	 * @return
 	 */
 	public void preferencesColons(Scanner saisie) {
 		//Recherche du colon à modifier
@@ -252,7 +251,7 @@ public class GestionColonie {
 	}
 	
 	/**
-	 * Méthode principale qui gere la colonie avec le switch case principal
+	 * Méthode qui gère le comportement global du programme
 	 * 
 	 * @param saisie
 	 * @return vrai/faux
