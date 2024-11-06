@@ -1,8 +1,8 @@
 package up.mi.paa.projet.partie1;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 import up.mi.paa.projet.partie1.Colonie.Colon;
 
@@ -12,10 +12,6 @@ import up.mi.paa.projet.partie1.Colonie.Colon;
  *
  */
 public class GestionColonie {
-
-	/**
-	 * Affichage du menu principal
-	 */
 
 	private Colonie colonie;
 
@@ -134,56 +130,57 @@ public class GestionColonie {
 
 	}
 	
-	public String saisiePreference(String colon, Scanner saisie) {
+	public ArrayList<Integer> saisiePreferences(Scanner saisie) {
+		ArrayList<Integer> preferences = new ArrayList<Integer>();
+		
+		do {
+			System.out.println("Saisir les preferences dans l'ordre séparées d'un espace. Exemple : 1 2 3");
+			System.out.println("Attention il doit y avoir exactement " + colonie.getTaille() + " ressources.\n");
+			String[] tabPreferences = saisie.next().split(" ", colonie.getTaille()); //StringTokenizer déprécié -> String::split est préféré, on obtient un tableau de String de taille max colonie.taille
+			if (tabPreferences.length == colonie.getTaille()) {
+				preferences.clear(); // si des mauvaises valeurs ont été entrées à une étape précédente de la boucle, réinitialise la liste
+				try {
+					int i = 0;
+					int ressource = Integer.parseInt(tabPreferences[i]);
+					// Cette condition est vraiment longue mais verifie que la donnée est valide et arrete la boucle dès la premiere valeur invalide
+					while (ressource >= 0 && ressource < colonie.getTaille() && !preferences.contains(ressource) && i < colonie.getTaille()) {
+						preferences.add(ressource);
+						ressource = Integer.parseInt(tabPreferences[++i]);
+					}
+				} catch (NumberFormatException e) {
+					System.err.println("Veuillez entrer une liste valide !");
+				}
+			}
+		} while (preferences.size() != colonie.getTaille());
 
-		System.out.println("Pour colon " + colon + " saisir les preferences suivi d'un espace entre chaque preference."
-				+ "\nExemple : A : 1 2 3.\n Attention il doit y avoir exactement " + this.colonie.getTaille()
-				+ " ressources.\n");
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < this.colonie.getTaille(); i++) {
-			sb.append(saisie.next());
-			sb.append(" ");
-		}
-
-		return sb.toString();
+		return preferences;
 	}
 	
 	/**
-	 * TODO commenter et ajouter une exception 
+	 * TODO commenter et ajouter une exception
+	 * 
 	 * @param saisie
 	 * @return
 	 */
 	public boolean preferencesColons(Scanner saisie) {
 		boolean val = false;
-		int cpt = 0;
 		/**
 		 * Saisir les preferences d'un colon Ex: A 1 2 3 4 Verifier qu'il y a bien
 		 * exactement n ressources correspondant à n colons
 		 * 
 		 */
 		while (!val) {
-			try {
-				System.out.println(((cpt == 0) ? "S" : "A nouveau, s") + ("aisir le nom du colon: "));
+			Colon colon = null;
+			while (colon == null) {
+				System.out.println("Saisir le nom du colon :");
 				String nomColon = saisie.next();
-				Colon colon = null;
-				for (Colon c : this.getColonie().getRelations().keySet()) {
-					if (c.getNom().equals(nomColon)) {
-						colon = c;
-					}
+				colon = colonie.chercherColonViaNom(nomColon);
+				if (colon == null) {
+					System.err.println("Veuillez saisir un nom valide !");
 				}
-
-				StringTokenizer token = new StringTokenizer(this.saisiePreference(nomColon, saisie), " ");
-				while (token.hasMoreElements()) {
-					String elem = token.nextToken();
-					// TODO fix this
-					this.colonie.ajouterPreferences(colon, Integer.parseInt(elem));
-				}
-				val = true;
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-				cpt++;
-				val = false;
 			}
+			colonie.ajouterPreferences(colon, saisiePreferences(saisie));
+			val = true;
 		}
 		return val;
 	}
@@ -236,7 +233,7 @@ public class GestionColonie {
 	}
 	
 	/**
-	 * Retourne les infiormations de la colonie sur sa gestion et les differentes modifications réalisées par l'user.
+	 * Retourne les informations de la colonie sur sa gestion et les differentes modifications réalisées par l'user.
 	 * 
 	 * @return une chaine de caractere donannt des infromations sur la colonie et les derniers mouvements.
 	 */

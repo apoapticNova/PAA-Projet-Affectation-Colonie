@@ -3,6 +3,7 @@ package up.mi.paa.projet.partie1;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Implementation d'une colonie spatiale. La classe {@code Colonie} comprend
@@ -221,6 +222,28 @@ public class Colonie {
 	 */
 	public int getTaille() {
 		return this.taille;
+	}
+	
+	/**
+	 * Trouve un colon dans {@code relations.ketSet()} dont le nom correspond à celui passé en paramètre
+	 * 
+	 * <p> L'unicité des noms est normalement assurée par le constructeur de Colonie
+	 * 
+	 * @return le premier colon trouvé avec le nom correspondant, {@code null} si non-trouvé
+	 */
+	public Colon chercherColonViaNom(String nom) {
+		Colon colon = null;
+		boolean trouve = false;
+		Colon candidat;
+		Iterator<Colon> itColons = relations.keySet().iterator();
+		while(itColons.hasNext() && !trouve) {
+			candidat = itColons.next();
+			if(candidat.getNom().equals(nom)) {
+				colon = candidat;
+				trouve = true;
+			}
+		}
+		return colon;
 	}
 	
     /**
