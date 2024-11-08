@@ -1,6 +1,8 @@
 package up.mi.paa.projet.partie1;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -33,12 +35,13 @@ public class GestionColonie {
 		System.out.println("1) Ajouter une relation entre deux colons;");
 		System.out.println("2) Ajouter les preferences d'un colon;");
 		System.out.println("3) Fin.");
+		System.out.println("0) Quitter le programme");
 	}
 	
 	public static void affichageMenu2() {
-		System.out.println("1) échanger les ressources de deux colons ;");
-		System.out.println("2) afficher le nombre de colons jaloux ;");
-		System.out.println("3) Fin.");
+		System.out.println("1) echanger les ressources de deux colons;");
+		System.out.println("2) afficher le nombre de colons jaloux;");
+		System.out.println("3) Fin. (Quitter le programme)");
 	}
 
 	/**
@@ -52,8 +55,7 @@ public class GestionColonie {
 	public static int saisieTailleColonie(Scanner saisie) {
 		int n = -1;
 		while (n <= 0) {
-			System.out.println(
-					"\nSaisir la taille de la colonie.\nAttention pour cette premiere version la capacite maximale est de 26 colons:");
+			System.out.println("Saisir la taille de la colonie. Attention pour cette premiere version la capacite maximale est de 26 colons:");
 			try {
 				n = saisie.nextInt();
 				if (n <= 0)
@@ -95,6 +97,10 @@ public class GestionColonie {
 				case 3:
 					System.out.println("Fin des modifications de la colonie");
 					break;
+					
+				case 0:
+					System.exit(0);
+					break;
 
 				default:
 					System.err.println("Choix invalide !");
@@ -117,17 +123,18 @@ public class GestionColonie {
 	private void menu2(Scanner saisie) {
 		int choix = -1;
 		while (choix != 3) {
+			System.out.println(colonie.toString());
 			System.out.println("\nSaisir votre choix parmi (1-3): ");
 			affichageMenu2();
 			try {
 				choix = saisie.nextInt();
 				switch (choix) {
 				case 1:
-					//choix1
+					echangerColons(saisie);
 					break;
 
 				case 2:
-					//choix2
+					System.out.println(colonie.coutAffectation() + " colons jaloux");
 					break;
 
 				case 3:
@@ -159,36 +166,17 @@ public class GestionColonie {
 	public void relationsEntreColons(Scanner saisie) {
 		try {
 			// Recherche du premier colon
-			Colon colon1 = null;
-			while (colon1 == null) {
-				System.out.println("Saisir le nom du colon de depart: ");
-				String nomColon = saisie.next();
-				colon1 = colonie.chercherColonViaNom(nomColon);
-				if (colon1 == null) {
-					System.err.println("Veuillez saisir un nom valide !");
-				}
-			}
+			Colon colon1 = saisirColon(saisie, "Saisir le nom du colon de depart :");
 			// Recherche du deuxième colon
-			Colon colon2 = null;
-			while (colon2 == null) {
-				System.out.println("\nSaisir le nom de l'autre colon, qui ne l'aime pas: ");
-				String nomColon = saisie.next();
-				colon2 = colonie.chercherColonViaNom(nomColon);
-				if (colon2 == null) {
-					System.err.println("Veuillez saisir un nom valide !");
-				}
-			}
+			Colon colon2 = saisirColon(saisie, "Saisir le nom de l'autre colon, qui ne l'aime pas :");
 			
 			//Pour arriver ici le programme aura forcément trouvé deux colons dans la même colonie
 			//Le seul cas à considérer est celui où les deux colons sont identiques (si ajouterRelation retourne false)
 			if(colonie.ajouterRelation(colon1, colon2)) {
-				System.out.println("Relation ajoutée !");
+				System.out.println("Relation ajoutee !");
 			} else {
-				System.out.println("Cette relation existe déjà");
+				System.out.println("Cette relation existe deja");
 			}
-			
-		} catch (InputMismatchException e) {
-			System.err.println(e.getMessage());
 		} catch (IllegalArgumentException e) {
 			System.err.println(e.getMessage());
 		}
@@ -207,18 +195,22 @@ public class GestionColonie {
 		// Saisir les preferences d'un colon Ex: A 1 2 3 4
 		// Verifier qu'il y a bien exactement n ressources correspondant à n colons
 		do {
-			System.out.println("Saisir les preferences dans l'ordre séparées d'un espace. Exemple : 1 2 3");
+			System.out.println("Saisir les preferences dans l'ordre separees d'un espace, numerotees en partant de 0 inclu. Exemple : 0 1 2");
 			System.out.println("Attention il doit y avoir exactement " + colonie.getTaille() + " ressources.\n");
+			saisie.nextLine(); //pour une raison inconnue si on ne fait pas nextLine() ici la prochaine instruction s'exécute une première fois sans attendre d'entrée utilisateur
 			String[] tabPreferences = saisie.nextLine().split(" ", colonie.getTaille()); //StringTokenizer déprécié -> String::split est préféré, on obtient un tableau de String de taille max colonie.taille
-			if (tabPreferences.length == colonie.getTaille()) {
+			if (new HashSet<String>(Arrays.asList(tabPreferences)).size() == colonie.getTaille()) { //Génère un HashSet sur le tas pour vérifier l'unicité des valeurs
 				preferences.clear(); // si des mauvaises valeurs ont été entrées à une étape précédente de la boucle, réinitialise la liste
 				try {
-					int i = 0;
-					int ressource = Integer.parseInt(tabPreferences[i]);
-					// Cette condition est vraiment longue mais verifie que la donnée est valide et arrete la boucle dès la premiere valeur invalide
-					while (ressource >= 0 && ressource < colonie.getTaille() && !preferences.contains(ressource) && i < colonie.getTaille()) {
-						preferences.add(ressource);
-						ressource = Integer.parseInt(tabPreferences[++i]);
+					//à partir de là on sait que les valeurs de tabPreferences sont toutes uniques, reste à savoir si elles sont valides
+					//RAPPEL: Entree valide = k in [0;colonie.taille[ <=> colonie.taille ressources
+					for(int i = 0; i < tabPreferences.length; i++) {
+						int ressource = Integer.parseInt(tabPreferences[i]);
+						if (ressource >= 0 && ressource < colonie.getTaille()) {
+							preferences.add(ressource);
+						} else {
+							break; //si la ressource est invalide -> sortie de boucle
+						}
 					}
 				} catch (NumberFormatException e) {
 					System.err.println("Veuillez entrer une liste valide !");
@@ -236,19 +228,41 @@ public class GestionColonie {
 	 */
 	public void preferencesColons(Scanner saisie) {
 		//Recherche du colon à modifier
+		Colon colon = saisirColon(saisie, "Saisir le nom du colon :");
+		colonie.ajouterPreferences(colon, saisiePreferences(saisie));
+		System.out.println("Preferences ajoutees pour " + colon.toString());
+	}
+	
+	public void echangerColons(Scanner saisie) {
+		Colon colon1 = saisirColon(saisie, "Saisir le premier colon du duo à echanger");
+		Colon colon2 = saisirColon(saisie, "Saisir le deuxieme colon du duo à echanger");
+		
+		colonie.echangerRessources(colon1, colon2);
+		System.out.println("Echange effectue !");
+	}
+	
+	/**
+	 * Utilise les données entrées par l'utilisateur pour trouver un colon via
+	 * {@code chercherColonViaNom(nom)}
+	 * 
+	 * <p> AssertionError si la colonie a une taille de 0 (aucun colon ne pourrait etre trouvé) 
+	 * 
+	 * @return le colon trouvé
+	 */
+	public Colon saisirColon(Scanner saisie, String message) {
+		assert colonie.getTaille() > 0;
 		Colon colon = null;
 		while (colon == null) {
-			System.out.println("Saisir le nom du colon :");
+			System.out.println(message);
 			String nomColon = saisie.next();
 			colon = colonie.chercherColonViaNom(nomColon);
 			if (colon == null) {
 				System.err.println("Veuillez saisir un nom valide !");
 			}
 		}
-		
-		colonie.ajouterPreferences(colon, saisiePreferences(saisie));
-		System.out.println("Préférences ajoutées pour " + colon.toString());
+		return colon;
 	}
+	
 	
 	/**
 	 * Méthode qui gère le comportement global du programme
@@ -258,9 +272,10 @@ public class GestionColonie {
 	 */
 	public void gestionColonie(Scanner saisie) {
 		while(!colonie.preferencesCompletes()) {
-			System.out.println("Il reste des préférences à saisir");
+			System.out.println("Il reste des preferences a saisir");
 			menu1(saisie);
 		}
+		colonie.affectationNaive();
 		menu2(saisie);
 
 	}
