@@ -294,7 +294,7 @@ public class Colonie {
 	}
 	
 	/**
-	 * Cette classe interne implémente les attributs et classes nécessaires pour définir
+	 * Cette classe interne implémente les attributs et méthodes nécessaires pour définir
 	 * un membre d'une {@code Colonie}.
 	 */
 	public class Colon {
@@ -345,6 +345,46 @@ public class Colonie {
 				sb.append(ressource);
 			}
 			return sb.toString();
+		}
+	}
+	
+	/**
+	 * Cette classe interne implémente les attributs et méthodes nécéssaires pour définir
+	 * une ressource à distribuer dans une {@code Colonie}
+	 * 
+	 * <p>La définition de cette classe permet une plus grande flexibilité dans la manipulation
+	 * de couples {@code Colon}/{@code Ressource}
+	 */
+	public class Ressource {
+		
+		private String nom;
+		
+		/**
+		 * Pour faciliter les affectations et autres méthodes manipulant des instances de
+		 * {@code Ressource}, il convient de définir un attribut de type {@code int} pour 
+		 * accéder rapidement à une ressource de la colonie.
+		 * 
+		 * <p> Il est important de savoir que cet identifiant doit etre unique dans le cadre de
+		 * l'instance englobante de {@code Colonie} associée. On souhaitera que pour une colonie
+		 * de taille n, il existe n ressources avec un unique identifiant de {@code 0} à {@code n-1}
+		 */
+		private final int identifiant;
+		
+		public Ressource(int identifiant) {
+			this.identifiant = identifiant;
+			this.nom = "R" + identifiant;
+		}
+		
+		public int getID() {
+			return identifiant;
+		}
+		
+		public String getNom() {
+			return nom;
+		}
+		
+		public void setNom(String nom) {
+			this.nom = nom;
 		}
 	}
 }
