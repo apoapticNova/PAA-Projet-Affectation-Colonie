@@ -248,8 +248,8 @@ public class Colonie {
 		}
 		return colon;
 	}
-	/*
-	 * @return true si toutes les listes de préférences sont complètes
+	/**
+	 * @return {@code true} si toutes les listes de préférences sont complètes
 	 */
 	public boolean preferencesCompletes() {
 		boolean preferencesCompletes = true;
@@ -385,6 +385,10 @@ public class Colonie {
 		
 		public void setNom(String nom) {
 			this.nom = nom;
+		}
+		
+		public boolean equals(Object o) {
+			return (o instanceof Ressource) && (o != null) && (((Ressource) o).getID() == identifiant);
 		}
 	}
 }
