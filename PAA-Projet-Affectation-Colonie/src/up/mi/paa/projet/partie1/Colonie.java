@@ -38,6 +38,8 @@ public class Colonie {
 	 */
 	private ArrayList<Colon> affectation;
 	
+	private HashMap<Ressource, Colon> affectation_test;
+	
 	/**
 	 * Instancie une nouvelle {@code Colonie} avec la taille spécifiée.
 	 * Si il y a au plus 26 colons, ils seront chacuns nommés par une lettre
@@ -248,6 +250,7 @@ public class Colonie {
 		}
 		return colon;
 	}
+	
 	/**
 	 * @return {@code true} si toutes les listes de préférences sont complètes
 	 */
@@ -327,14 +330,14 @@ public class Colonie {
 		public ArrayList<Integer> getPreferences() {
 			return preferences;
 		}
+		
+		@Override
 		public boolean equals(Object o) {
 			return o == this;
 		}
 		
 		/**
-		 * Methode toString() retourne les preferences du colon
-		 * 
-		 * @return les preferences du colon suivi d'un espace
+		 * @return nom suivi des preferences dans l'ordre (séparées d'un espace)
 		 */
 		@Override
 		public String toString() { 
@@ -387,6 +390,7 @@ public class Colonie {
 			this.nom = nom;
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			return (o instanceof Ressource) && (o != null) && (((Ressource) o).getID() == identifiant);
 		}
