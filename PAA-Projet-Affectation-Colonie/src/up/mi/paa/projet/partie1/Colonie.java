@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 /**
  * Implementation d'une colonie spatiale. La classe {@code Colonie} comprend
@@ -29,56 +30,40 @@ public class Colonie {
 	private HashMap<Colon, HashSet<Colon>> relations;
 	
 	/**
-	 * Affectation des ressources pour la {@code Colonie} courante.
-	 * Chaque {@code Colon} reçoit la ressource associée à son index dans la liste.
-	 * 
-	 * <p>(L'implémentation avec ArrayList requiert une garantie de l'unicité de
-	 * chaque élément au moment de l'affectation des ressources, une implémentation
-	 * avec {@code TreeSet} pour forcer l'unicité serait possible mais peu pertinente)
+	 * {@link HashMap} contenant toutes les instances de {@link Ressource} disponibles
+	 * dans cette colonie en clés et les instances de {@link Colon} en valeurs
 	 */
-	private ArrayList<Colon> affectation;
-	
-	private HashMap<Ressource, Colon> affectation_test;
+	private HashMap<Ressource, Colon> affectation;
 	
 	/**
 	 * Instancie une nouvelle {@code Colonie} avec la taille spécifiée.
-	 * Si il y a au plus 26 colons, ils seront chacuns nommés par une lettre
+	 * Si la {@code taille} entrée est négative ou nulle, initialise une {@code Colonie}
+	 * de taille 0.
+	 * 
+	 * <p>Si il y a au plus 26 colons, ils seront chacuns nommés par une lettre
 	 * de l'alphabet.
 	 * 
 	 * @param	taille la taille de la colonie
-	 * @throws	IllegalArgumentException si la taille est négative
 	 */
-	public Colonie(int taille) throws IllegalArgumentException { 
-		if (taille < 0) {
-			throw new IllegalArgumentException("Taille initiale de colonie invalide : " + taille);
-		}
-		
+	public Colonie(int taille) {
 		this.taille = taille;
-		this.affectation = new ArrayList<Colon>(); 
-		
 		this.relations = new HashMap<Colon, HashSet<Colon>>();
-		if (this.taille <= 26) {
-			creerColonsAlphabet();
-		}
-		else {
-			for(int i = 0; i<taille; i++) {
-				relations.put(new Colon("C"+i+1), new HashSet<Colon>());
-			}
-		}
+		this.affectation = new HashMap<Ressource, Colon>();
 		
-	}
-
-	
-	/**
-	 * Ajoute les instances de {@code Colon} en tant que clés dans l'attribut {@code relations}
-	 * de l'instance courante de {@code Colonie}.
-	 * 
-	 * <p>Cette méthode n'est appelée que par le constructeur dans le cas ou la {@code taille}
-	 * de la colonie est inférieure ou égale à 26.
-	 */
-	private void creerColonsAlphabet() {
-		for(int i = 0; i<taille; i++) {
-			relations.put(new Colon(Character.toString('A'+i)), new HashSet<Colon>());
+		if (this.taille > 0) {
+			if (this.taille <= 26) {
+				for (int i = 0; i < this.taille; i++) {
+					relations.put(new Colon(i, Character.toString('A' + i)), new HashSet<Colon>());
+					affectation.put(new Ressource(i), null);
+				}
+			} else {
+				for (int i = 0; i < this.taille; i++) {
+					relations.put(new Colon(i), new HashSet<Colon>());
+					affectation.put(new Ressource(i), null);
+				}
+			}
+		} else {
+			this.taille = 0;
 		}
 	}
 	
@@ -89,6 +74,20 @@ public class Colonie {
 	 */
 	public HashMap<Colon, HashSet<Colon>> getRelations() {
 		return this.relations;
+	}
+	
+	public int getTaille() {
+		return taille;
+	}
+	
+	/**
+	 * Initialise une instance de {@code Colon} et {@code Ressource} puis
+	 * incrémente l'attribut {@code taille}
+	 */
+	public void agrandir() {
+		relations.put(new Colon(taille), new HashSet<Colon>());
+		affectation.put(new Ressource(taille), null);
+		taille++;
 	}
 	
 	/**
@@ -133,33 +132,25 @@ public class Colonie {
 	 * ressources convoitées ont été affectées à des colons qu'il n'aime pas. 
 	 * 
 	 * @return le cout d'affectation (le nombre de colons jaloux)
-	 * @throws IllegalStateException si {@code taille} ne correspond pas à {@code affectation.size()}
+	 * @throws IllegalStateException si il y a des ressources/colons non affectés
 	 */
 	public int coutAffectation() throws IllegalStateException {
-		if (affectation.contains(null)) {
-			throw new IllegalStateException("Ne peut pas calculer le cout d'affectation : ressources non-affectees ou taille de la colonie reduite sans re-affectation");
-		}
-		if (affectation.size() != this.taille) {
-			throw new IllegalStateException("Ne peut pas calculer le cout d'affectation : " + ((affectation.size() < this.taille)?"ressources non-affectees":"plus de colons que de ressources"));
+		if (!affectation.values().containsAll(relations.keySet())) {
+			throw new IllegalStateException("Ne peut pas calculer le cout d'affectation : ressource ou colon non-affecte");
 		}
 		
 		int cout = 0;
-		
-		for(Colon colon : relations.keySet()) {
-			boolean estJaloux = false;
-			ArrayList<Integer> preferences = colon.getPreferences();
-			int ressource = affectation.indexOf(colon);
-			for(int i = preferences.indexOf(ressource); i>0; i--) {
-				if (relations.get(colon).contains(affectation.get(preferences.get(i-1)))) {
-					estJaloux = true;
+		for(Entry<Ressource, Colon> couple : affectation.entrySet()) {
+			ArrayList<Integer> preferences = couple.getValue().getPreferences();
+			//Boucle initialisée à l'index de la ressource dans la liste de préférences du colon
+			for(int i = preferences.indexOf(couple.getKey().getID()); i > 0; i--) {
+				Ressource modele = new Ressource(preferences.get(i-1));
+				if(relations.get(couple.getValue()).contains(affectation.get(modele))) {
+					cout++;
+					break; //Le colon est jaloux, pas besoin de continuer à tester, on sort de la boucle
 				}
 			}
-			
-			if (estJaloux) {
-				cout++;
-			}
 		}
-		
 		return cout;
 	}
 	
@@ -170,6 +161,7 @@ public class Colonie {
 	 * @throws IllegalStateException si tous les colons n'ont pas une liste de préférences complète
 	 */
 	public void affectationNaive() throws IllegalStateException {
+		//TODO
 		//initialisation de la liste d'affectations
 		ArrayList<Colon> nouvelleAffectation = new ArrayList<Colon>();
 		while (nouvelleAffectation.size() < this.taille) {
@@ -210,23 +202,11 @@ public class Colonie {
 	 * @throws IllegalArgumentException si les deux colons n'ont pas déjà de ressource affectées
 	 */
 	public void echangerRessources(Colon c1, Colon c2) throws IllegalArgumentException {
-		if (!affectation.contains(c1) || !affectation.contains(c2)) {
-			throw new IllegalArgumentException("Ne peut pas faire l'échange : ressource non affectée");
+		if (!affectation.containsValue(c1) || !affectation.containsValue(c2)) {
+			throw new IllegalArgumentException("Ne peut pas faire l'echange : colon non affecte");
 		}
 		
-		int ressource_c1 = affectation.indexOf(c1);
-		int ressource_c2 = affectation.indexOf(c2);
-		affectation.set(ressource_c1, c2);
-		affectation.set(ressource_c2, c1);
-	}
-	
-	/**
-	 * Méthode qui permet de retourner la taille de la colonie.
-	 * 
-	 * @return taille de la colonie
-	 */
-	public int getTaille() {
-		return taille;
+		//TODO
 	}
 	
 	/**
@@ -238,14 +218,13 @@ public class Colonie {
 	 */
 	public Colon chercherColonViaNom(String nom) {
 		Colon colon = null;
-		boolean trouve = false;
 		Colon candidat;
 		Iterator<Colon> itColons = relations.keySet().iterator();
-		while(itColons.hasNext() && !trouve) {
+		while(itColons.hasNext()) {
 			candidat = itColons.next();
 			if(candidat.getNom().equals(nom)) {
 				colon = candidat;
-				trouve = true;
+				break;
 			}
 		}
 		return colon;
@@ -303,26 +282,35 @@ public class Colonie {
 	public class Colon {
 		
 		private String nom;
+		private final int identifiant;
 		
 		/**
 		 * Préférences des ressources pour l'instance courante de {@code Colon}.
 		 * 
 		 * La liste est à traiter comme un ordre de priorité descendant
 		 * (l'élément à l'index 0 doit être le plus convoité par le {@code Colon}.
-		 * 
-		 * Cette implémentation comprend les mêmes problèmes d'unicité que pour l'attribut
-		 * {@code affectation} de {@code Colonie}. De plus, il faudra s'assurer que chaque
-		 * {@code Colon} définit une préférence pour les n ressources.
 		 */
 		private ArrayList<Integer> preferences;
 		
-		private Colon(String nom) {
+		private Colon(int identifiant, String nom) {
+			this.identifiant = identifiant;
 			this.nom = nom;
 			this.preferences = new ArrayList<Integer>();
 		}
 		
+		private Colon(int identifiant) {
+			this.identifiant = identifiant;
+			this.nom = "C" + identifiant;
+		}
+		
+		public int getID() {
+			return identifiant;
+		}
 		public String getNom() {
 			return nom;
+		}
+		public void setNom(String nom) {
+			this.nom = nom;
 		}
 		public void setPreferences(ArrayList<Integer> preferences) {
 			this.preferences = preferences;
@@ -333,7 +321,7 @@ public class Colonie {
 		
 		@Override
 		public boolean equals(Object o) {
-			return o == this;
+			return (o instanceof Colon) && (o != null) && (((Colon) o).getID() == identifiant);
 		}
 		
 		/**
