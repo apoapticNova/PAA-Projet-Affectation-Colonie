@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -273,6 +274,21 @@ public class Colonie {
 			}
 		}
 		return sb.toString();
+	}
+	
+	public class BiMap<K, V> {
+		private Map<K, V> valueByKey;
+		private Map<V, K> keyByValue;
+		
+		public BiMap() {
+			valueByKey = new HashMap<K, V>();
+			keyByValue = new HashMap<V, K>();
+		}
+		
+		public void put(K key, V value) {
+			valueByKey.put(key, value);
+			keyByValue.put(value, key);
+		}
 	}
 	
 	/**
