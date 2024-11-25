@@ -285,42 +285,6 @@ public class Colonie {
 		return sb.toString();
 	}
 	
-	public class BiMap<K, V> {
-		private Map<K, V> valueByKey;
-		private Map<V, K> keyByValue;
-		
-		public BiMap() {
-			valueByKey = new HashMap<K, V>();
-			keyByValue = new HashMap<V, K>();
-		}
-		
-		public void put(K key, V value) {
-			valueByKey.put(key, value);
-			keyByValue.put(value, key);
-		}
-		
-		public V getValue(K key) {
-			return valueByKey.get(key);
-		}
-		
-		public K getKey(V value) {
-			return keyByValue.get(value);
-		}
-		
-		public void removeByKey(K key) {
-			keyByValue.remove(valueByKey.remove(key));
-		}
-		
-		public void removeByValue(V value) {
-			valueByKey.remove(keyByValue.remove(value));
-		}
-		
-		public void removeEntry(K key, V value) {
-			valueByKey.remove(key, value);
-			keyByValue.remove(value, key);
-		}
-	}
-	
 	/**
 	 * Cette classe interne implémente les attributs et méthodes nécessaires pour définir
 	 * un membre d'une {@code Colonie}.
