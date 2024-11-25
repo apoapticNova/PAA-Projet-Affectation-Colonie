@@ -1,9 +1,11 @@
 package up.mi.paa.projet.partie1;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -31,10 +33,16 @@ public class Colonie {
 	private HashMap<Colon, HashSet<Colon>> relations;
 	
 	/**
-	 * {@link HashMap} contenant toutes les instances de {@link Ressource} disponibles
-	 * dans cette colonie en clés et les instances de {@link Colon} en valeurs
+	 * {@link HashMap} répertoriant les ressources en valeurs associées à leur
+	 * identifiant en clé
 	 */
-	private HashMap<Ressource, Colon> affectation;
+	private HashMap<Integer, Ressource> ressources;
+	
+	/**
+	 * {@link HashMap} contenant les couples d'instances {@link Colon}/{@link Ressource} 
+	 * correspondant aux affectations des ressources aux colons de cette colonie 
+	 */
+	private HashMap<Colon, Ressource> affectations;
 	
 	/**
 	 * Instancie une nouvelle {@code Colonie} avec la taille spécifiée.
@@ -49,18 +57,19 @@ public class Colonie {
 	public Colonie(int taille) {
 		this.taille = taille;
 		this.relations = new HashMap<Colon, HashSet<Colon>>();
-		this.affectation = new HashMap<Ressource, Colon>();
+		this.ressources = new HashMap<Integer, Ressource>();
+		this.affectations = new HashMap<Colon, Ressource>();
 		
 		if (this.taille > 0) {
 			if (this.taille <= 26) {
 				for (int i = 0; i < this.taille; i++) {
 					relations.put(new Colon(i, Character.toString('A' + i)), new HashSet<Colon>());
-					affectation.put(new Ressource(i), null);
+					ressources.put(i, new Ressource(i));
 				}
 			} else {
 				for (int i = 0; i < this.taille; i++) {
 					relations.put(new Colon(i), new HashSet<Colon>());
-					affectation.put(new Ressource(i), null);
+					ressources.put(i, new Ressource(i));
 				}
 			}
 		} else {
@@ -82,12 +91,12 @@ public class Colonie {
 	}
 	
 	/**
-	 * Initialise une instance de {@code Colon} et {@code Ressource} puis
-	 * incrémente l'attribut {@code taille}
+	 * Initialise une instance de {@code Colon} et {@code Ressource},
+	 * les place dans leurs Map correspondantes, puis incrémente l'attribut {@code taille}
 	 */
 	public void agrandir() {
 		relations.put(new Colon(taille), new HashSet<Colon>());
-		affectation.put(new Ressource(taille), null);
+		ressources.put(taille, new Ressource(taille));
 		taille++;
 	}
 	
@@ -136,20 +145,20 @@ public class Colonie {
 	 * @throws IllegalStateException si il y a des ressources/colons non affectés
 	 */
 	public int coutAffectation() throws IllegalStateException {
-		if (!affectation.values().containsAll(relations.keySet())) {
+		if (!affectations.values().containsAll(ressources.values())) {
 			throw new IllegalStateException("Ne peut pas calculer le cout d'affectation : ressource ou colon non-affecte");
 		}
 		
 		int cout = 0;
-		for(Entry<Ressource, Colon> couple : affectation.entrySet()) {
-			ArrayList<Integer> preferences = couple.getValue().getPreferences();
-			//Boucle initialisée à l'index de la ressource dans la liste de préférences du colon
-			for(int i = preferences.indexOf(couple.getKey().getID()); i > 0; i--) {
-				Ressource modele = new Ressource(preferences.get(i-1));
-				if(relations.get(couple.getValue()).contains(affectation.get(modele))) {
-					cout++;
-					break; //Le colon est jaloux, pas besoin de continuer à tester, on sort de la boucle
-				}
+		/* Pour chaque affectation, si, parmis les relations du colon en question,
+		 * il existe colon qu'il n'aime pas avec une ressource notée plus haute dans la
+		 * liste des préférences, alors le colon en question est jaloux
+		 */
+		for(Colon colon : affectations.keySet()) {
+			ArrayList<Integer> preferences = colon.getPreferences();
+			ArrayList<Ressource> prefere = new ArrayList<>();
+			for (Colon relation : relations.get(colon)) {
+				//TODO
 			}
 		}
 		return cout;
@@ -194,7 +203,7 @@ public class Colonie {
 		}
 		
 		//Enregistrement de l'affectation dans l'attribut d'instance (ecrase l'ancienne)
-		this.affectation = nouvelleAffectation;
+		this.affectations = nouvelleAffectation;
 	}
 	
 	/**
@@ -203,11 +212,11 @@ public class Colonie {
 	 * @throws IllegalArgumentException si les deux colons n'ont pas déjà de ressource affectées
 	 */
 	public void echangerRessources(Colon c1, Colon c2) throws IllegalArgumentException {
-		if (!affectation.containsValue(c1) || !affectation.containsValue(c2)) {
+		if (!affectations.containsKey(c1) || !affectations.containsKey(c2)) {
 			throw new IllegalArgumentException("Ne peut pas faire l'echange : colon non affecte");
 		}
 		
-		//TODO
+		affectations.replace(c1, affectations.replace(c2, affectations.get(c1)));
 	}
 	
 	/**
@@ -289,6 +298,27 @@ public class Colonie {
 			valueByKey.put(key, value);
 			keyByValue.put(value, key);
 		}
+		
+		public V getValue(K key) {
+			return valueByKey.get(key);
+		}
+		
+		public K getKey(V value) {
+			return keyByValue.get(value);
+		}
+		
+		public void removeByKey(K key) {
+			keyByValue.remove(valueByKey.remove(key));
+		}
+		
+		public void removeByValue(V value) {
+			valueByKey.remove(keyByValue.remove(value));
+		}
+		
+		public void removeEntry(K key, V value) {
+			valueByKey.remove(key, value);
+			keyByValue.remove(value, key);
+		}
 	}
 	
 	/**
@@ -306,7 +336,7 @@ public class Colonie {
 		 * La liste est à traiter comme un ordre de priorité descendant
 		 * (l'élément à l'index 0 doit être le plus convoité par le {@code Colon}.
 		 */
-		private ArrayList<Integer> preferences;
+		private ArrayList<Integer> preferences; //TODO: Change type to ArrayList<Ressource>
 		
 		private Colon(int identifiant, String nom) {
 			this.identifiant = identifiant;
@@ -317,6 +347,10 @@ public class Colonie {
 		private Colon(int identifiant) {
 			this.identifiant = identifiant;
 			this.nom = "C" + identifiant;
+		}
+		
+		public boolean preferencesCompletes(int taille) {
+			return new HashSet<Integer>(preferences).size() == taille;
 		}
 		
 		public int getID() {
@@ -377,7 +411,7 @@ public class Colonie {
 		 */
 		private final int identifiant;
 		
-		public Ressource(int identifiant) {
+		private Ressource(int identifiant) {
 			this.identifiant = identifiant;
 			this.nom = "R" + identifiant;
 		}
