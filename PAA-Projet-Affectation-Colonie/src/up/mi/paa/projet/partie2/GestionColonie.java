@@ -415,8 +415,9 @@ public class GestionColonie {
 	 * - Verifie si la ligne est correcte.
 	 * - Si elle commence par colon( et se termine par une parenthese ).
 	 * - Si la ligne n'est pas correcte erreur.
+	 * 
 	 * @param ligne
-	 * @return chaine
+	 * @return chaine colon
 	 * @throws Exception
 	 */
 	public static String recupererColon(String ligne) throws Exception 
@@ -435,41 +436,76 @@ public class GestionColonie {
 	    }
 	}
 	
+	/**
+	 * Methode qui permet de recuperer la ressource depuis la ligne recupérée.
+	 * - Verifie si la ligne est correcte.
+	 * - Si elle commence par ressource( et se termine par une parenthese ).
+	 * - Si la ligne n'est pas correcte erreur.
+	 * 
+	 * @param ligne
+	 * @return chaine ressource
+	 * @throws Exception
+	 */
 	public static String recupererRessources(String ligne) throws Exception 
 	{
 		 if (ligne.startsWith("ressource(") && ligne.endsWith(")"))
 		 {
 			 String ressource = ligne.substring("ressource(".length(), ligne.length() - 1).trim();
 		     if (ressource.isEmpty()) {
-		         throw new Exception("Erreur: nom de la ressource manquant ou invalide dans la ligne: " + ligne);
+		         throw new Exception("Erreur: nom de la ressource manquant ou incorect dans la ligne: " + ligne);
 		        }
 		        return ressource;
 		    } else {
-		        throw new Exception("Erreur: La ligne pour la ressource n'est pas correctement formatée : " + ligne);
+		        throw new Exception("Erreur: ligne non valide: " + ligne);
 		    }
 		}
 	
-	public static String[] recupererDeteste(String ligne) throws Exception {
-		if (ligne.startsWith("deteste ")) {
-	        String[] elements = ligne.substring("deteste ".length()).trim().split("\\s+");
-	        if (elements.length != 2) {
-	            throw new Exception("Erreur: Il doit y avoir exactement deux colons dans la relation deteste. Ligne: " + ligne);
+	/**
+	 * Methode qui permet de recuperer un tableau de chaine des relations depuis la ligne recupérée.
+	 * - Verifie si la ligne est correcte.
+	 * - Si elle commence par deteste( et se termine par une parenthese ).
+	 * - Si la ligne n'est pas correcte erreur.
+	 * 
+	 * @param ligne
+	 * @return tableau de chaine deteste
+	 * @throws Exception
+	 */
+	public static String [] recupererDeteste(String ligne) throws Exception {
+		if (ligne.startsWith("deteste ")) 
+		{
+	        String [] elements = ligne.substring("deteste ".length()).trim().split("\\s+");
+	        if (elements.length != 2) 
+	        {
+	            throw new Exception("Erreur: Il doit y avoir exactement deux colons dans la relation. Ligne: " + ligne);
 	        }
 	        return elements;
 	    } else {
-	        throw new Exception("Erreur: La ligne pour la relation deteste n'est pas correctement formatée : " + ligne);
+	        throw new Exception("Erreur: ligne non valide: " + ligne);
 	    }
 	}
 	
-	public static String[] recupererPreferences(String ligne) throws Exception {
-		if (ligne.startsWith("preferences ")) {
-	        String[] tab = ligne.substring("preferences ".length()).trim().split("\\s+");
-	        if (tab.length == 0) {
-	            throw new Exception("Erreur: Les préférences ne peuvent pas être vides. Ligne: " + ligne);
+	/**
+	 * Methode qui permet de recuperer un tableau de chaine des preferences depuis la ligne recupérée.
+	 * - Verifie si la ligne est correcte.
+	 * - Si elle commence par preferences( et se termine par une parenthese ).
+	 * - Si la ligne n'est pas correcte erreur.
+	 * 
+	 * @param ligne
+	 * @return tableau de chaine preferences
+	 * @throws Exception
+	 */
+	public static String [] recupererPreferences(String ligne) throws Exception {
+		if (ligne.startsWith("preferences ")) 
+		{
+	        String [] tab = ligne.substring("preferences ".length()).trim().split("\\s+");
+	        if (tab.length == 0) 
+	        {
+	            throw new Exception("Erreur: les preferences ne peuvent pas être vides. Ligne: " + ligne);
 	        }
 	        return tab;
-	    } else {
-	        throw new Exception("Erreur: La ligne pour les préférences n'est pas correctement formatée : " + ligne);
+	    } else 
+	    {
+	        throw new Exception("Erreur: ligne non valide: " + ligne);
 	    }
 	}
 	/**
