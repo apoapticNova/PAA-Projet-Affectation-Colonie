@@ -571,9 +571,8 @@ public class GestionColonie {
 		**/
 	    //test si fichier valide 
 		try {
-			System.out.println(fichierTexteValide("D:\\chaker_zakaria\\Universite_Licence\\Universite_Paris_Cite\\L3_info\\S5\\Colonie.txt"));
+			System.out.println(fichierTexteValide("CheminAcces"));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
