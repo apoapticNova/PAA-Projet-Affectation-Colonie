@@ -1,5 +1,8 @@
 package up.mi.paa.projet.partie2;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -7,6 +10,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import up.mi.paa.projet.partie2.Colonie.Colon;
+
 
 /**
  * La classe {@code GestionColonie} permet l'interaction entre l'utilisateur et
@@ -48,23 +52,20 @@ public class GestionColonie {
 	 * Ajoute le nombre de colons dans la colonie. Verifie le type entré et le
 	 * nombre de colons saisi.
 	 * 
-	 * Pour cette V1, la capacité est limitée à 26.
+	 * La capacité de la colonie peut dépasser 26 pour cette v2.
 	 * 
 	 * @param saisie un Scanner
 	 */
 	public static int saisieTailleColonie(Scanner saisie) {
 		int n = -1;
 		while (n <= 0) {
-			System.out.println("Saisir la taille de la colonie. Attention pour cette premiere version la capacite maximale est de 26 colons:");
+			System.out.println("Saisir la taille de la colonie: ");
 			try {
 				n = saisie.nextInt();
 				if (n <= 0)
 					System.err.println("Erreur: La colonie ne peut pas avoir une taille inferieure a 0. ");
-				else if (n > 26) {
-					System.err.println("Erreur: La colonie a une capacite limitee a 26...");
-					n = 0;
 				}
-			} catch (InputMismatchException erreur) {
+			 catch (InputMismatchException erreur) {
 				System.err.println("Attention. Saisir un nombre entier.");
 				saisie.nextLine();
 			}
@@ -279,7 +280,112 @@ public class GestionColonie {
 		menu2(saisie);
 
 	}
+	/**
+	 * Pour que le fichier texte soit valide, le fichier doit respecter un ordre précis.
+	 * - Il faudra définir d'abord le(s) colon(s) -> les ressources -> la relation potentielle entre deux colons -> les preferences.
+	 * - Pour qu'il soit valide il faut avoir 0 fautes d'orthographe et 0 saut de ligne.
+	 * - Autant de prereferences que de colons que ressources.
+	 * 
+	 * @param cheminAcces
+	 * @return Colonie construite depuis chemin du fichier
+	 * @throws Exception
+	 */
+	public static boolean fichierTexteValide(String cheminAcces) throws Exception
+	{
+		boolean valide = false;
+	    String [] collection = {"colon", "ressource", "deteste", "preferences"};
+		try(BufferedReader br = new BufferedReader(new FileReader(cheminAcces)))
+		{
+			String ligne = null;
+			int ordre = 0;
+			int nbColons = 0, nbRessources = 0, nbPreferences = 0;
+			
+			while((ligne = br.readLine()) != null)
+			{
+				if(ligne.isEmpty())
+				{
+					throw new Exception("Erreur: ligne vide detectee dans le fichier texte");
+				}
+			
+			
+			boolean motCle = false;
+			for(int i=0; i<collection.length; i++)
+			{
+				if(ligne.startsWith(collection[i]))
+				{
+					motCle = true;
+					if(i<ordre)
+						throw new Exception("Erreur: Ordre des requetes non respecte. Voir ligne : "+ligne);
+					
+					ordre = Math.max(ordre, i);
+					//on force la sortie de la boucle 
+					break;
+				}
+			}
+			if(!motCle)
+				throw new Exception("Erreur: Mot mal saisi ou inconnu. Ligne : "+ligne);
+			
+			//Verification 
+			if(ligne.startsWith("colon"))
+				nbColons++;
+			else if(ligne.startsWith("ressource"))
+				nbRessources++;
+			else if(ligne.startsWith("preferences"))
+				nbPreferences++;
+		
+		}
+		//Verification de la coherence du fichier
+		if(nbColons ==0 || nbRessources==0 || nbPreferences ==0)
+		{
+			throw new Exception("Erreur: le fichier doit comporter au moins un colon, une ressource et une preferences");
+		}
+		if(nbColons != nbPreferences)
+		{
+			throw new Exception("Erreur: il doit y avoir autant de colons que de preferences");
+		}
+		if(nbColons != nbRessources)
+		{
+			throw new Exception("Erreur: Il doit y avoir autant de colons que de ressources");
+		}
+		valide = true;
+		}catch(IOException erreur)
+		{
+			throw new Exception("Erreur lors de la lecture du fichier texte: " + erreur.getMessage());
+		}
+			
+		return valide;
+	}
 	
+	public Colonie constructionColonieFichier(String cheminAcces) throws Exception 
+	{
+		Colonie colonie = null;
+		try(BufferedReader br = new BufferedReader(new FileReader(cheminAcces)))
+		{
+			String ligne = null;
+			Colon c = null;
+			//Compteur de colon
+			int cpt = 0;
+			
+			while((ligne = br.readLine())!=null)
+			{
+				if(ligne.startsWith("colon"))
+					cpt++;
+				else
+					break;
+			}
+			
+			if(cpt==0)
+			{
+				System.out.println("Construction de la colonie impossible: aucun colon detecté");
+				return colonie;
+			}
+			else
+			{
+				//On construit la colonie 
+			}
+		}
+		return colonie;
+	}
 	/**
 	 * Retourne les informations de la colonie sur sa gestion et les differentes modifications réalisées par l'user.
 	 * 
@@ -297,12 +403,24 @@ public class GestionColonie {
 	 * main provisoire qui permet pour le moment de réaliser les tests. Un main sera de toute façon utilisé pour faire fonctionner l'interface user.
 	 */
 	public static void main(String[] args) {
+		/**
 		affichageDebut();
+		 
 		Scanner sc = new Scanner(System.in);
 		GestionColonie gC = new GestionColonie(sc);
 		gC.gestionColonie(sc);
 		System.out.println(gC.toString());
 		sc.close();
+		
+		**/
+	    //test si fichier valide 
+		try {
+			System.out.println(fichierTexteValide("D:\\chaker_zakaria\\Universite_Licence\\Universite_Paris_Cite\\L3_info\\S5\\Colonie.txt"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

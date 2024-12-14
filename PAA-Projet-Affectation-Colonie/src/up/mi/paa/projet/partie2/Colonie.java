@@ -42,6 +42,8 @@ public class Colonie {
 	 * Instancie une nouvelle {@code Colonie} avec la taille spécifiée.
 	 * Si il y a au plus 26 colons, ils seront chacuns nommés par une lettre
 	 * de l'alphabet.
+	 *  
+	 *  Sinon il seront nommés par defaut à partir de Z: C1, C2, etc...
 	 * 
 	 * @param	taille la taille de la colonie
 	 * @throws	IllegalArgumentException si la taille est négative
@@ -329,6 +331,10 @@ public class Colonie {
 		}
 		public boolean equals(Object o) {
 			return o == this;
+		}
+		
+		public void setNomColon(String s)
+		{	this.nom = s;
 		}
 		
 		/**
