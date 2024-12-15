@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Implementation d'une colonie spatiale. La classe {@code Colonie} comprend
@@ -65,6 +66,16 @@ public class Colonie {
 				relations.put(new Colon("C"+i+1), new HashSet<Colon>());
 			}
 		}
+		
+	}
+	
+	public Colonie(List<String>nomColons) throws IllegalArgumentException
+	{
+		if(nomColons.size() <=0 || nomColons.equals(null))
+		{
+			throw new IllegalArgumentException("Taille initiale de colonie non Valide: "+nomColons.size());
+		}
+		this.taille = nomColons.size();
 		
 	}
 

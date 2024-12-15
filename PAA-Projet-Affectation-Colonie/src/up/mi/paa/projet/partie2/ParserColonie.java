@@ -3,8 +3,10 @@ package up.mi.paa.projet.partie2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ParserColonie {
@@ -225,51 +227,82 @@ public class ParserColonie {
 	 * @throws Exception
 	 */
 	
-	public Colonie constructionColonieFichier(String cheminAcces) throws Exception 
+	public Colonie constructionColonieFichier(String cheminAcces) throws Exception
 	{
 		Colonie colonie = null;
+		List<String> listeColons = null;
 		try (BufferedReader br = new BufferedReader(new FileReader(cheminAcces))) {
-			if(fichierTexteValide(cheminAcces) == true)
+			if(fichierTexteValide(cheminAcces))
 			{
-				System.out.println("Syntaxe fichier valide");
+				System.out.println("Fichier valide");
+				listeColons = new ArrayList<String>();
 				String ligne = null;
 				
-				if((ligne = br.readLine())!= null)
+				while ((ligne = br.readLine()) != null) 
 				{
-					
+					if (ligne.startsWith("colon")) 
+					{
+						String colon = recupererColon(ligne);
+	                    listeColons.add(colon);
+	                }}
+					if(listeColons.size()>0)
+					{
+						colonie = new Colonie(listeColons);
+					}
+					else
+					{
+						throw new Exception("Aucun colon trouve dans le fichier texte");
+					}
 				}
-			}
-			else 
-			{
-				System.err.println("Syntaxe fichier non valide");
-			}
+				else
+				{
+					System.err.println("Syntaxe fichier non valide");	
+				}
 		}catch(Exception erreur)
 		{
 			System.err.println(erreur.getMessage());
 		}
 		return colonie;
 	}
-		
+	/**
+	 * Méthode qui permet de retourner le nombre de colons contenu dans notre fichier texte. Cette méthode verifie en amont d'abord si le fichier est valide afin de pouvoir effectuer la construction de la colonie de maniere sereine.
+	 * 
+	 * @param cheminAcces
+	 * @return nbColons trouvé dans fichier Texte
+	 * @throws Exception
+	 */
 	public static int getNbColonsFichier(String cheminAcces) throws Exception
 	{
 		int nbColons = 0;
-		  try (BufferedReader br = new BufferedReader(new FileReader(cheminAcces))) 
-		  {
-			  if(fichierTexteValide(cheminAcces) == true)
-			  {
-			  String ligne;
-			  while ((ligne = br.readLine()) != null) {
-		      if (ligne.startsWith("colon")) {
-		          nbColons++;
-		       }
-			  }
-		   }
-			
+		if (!fichierTexteValide(cheminAcces)) 
+		{
+			throw new Exception("Fichier invalide");
+		}
+		try(BufferedReader br = new BufferedReader(new FileReader(cheminAcces))) 
+		{
+			String ligne;
+			while ((ligne = br.readLine()) != null) 
+			{
+				if (ligne.startsWith("colon")) 
+				{
+					nbColons++;
+				}
+			}
 		}catch(Exception erreur)
 		{
 			System.err.println(erreur.getMessage());
 		}
 		return nbColons;
+	}
+	
+	public static void main(String[]args)
+	{
+		try {
+			System.out.println(getNbColonsFichier("D:\\chaker_zakaria\\Universite_Licence\\Universite_Paris_Cite\\L3_info\\S5\\Colonie.txt"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
