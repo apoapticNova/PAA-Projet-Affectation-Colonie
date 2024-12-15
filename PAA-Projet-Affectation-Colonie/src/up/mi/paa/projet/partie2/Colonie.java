@@ -145,6 +145,11 @@ public class Colonie {
 		c.setPreferences(preferences);
 	}
 	
+	public void ajouterPreferencesDepuisFichier(Colon c, ArrayList<String> preferences) throws IllegalArgumentException
+	{
+		
+	}
+	
 	/**
 	 * Détermine le cout d'affectation en vérifiant le nombre de colon dont une ou plusieurs
 	 * ressources convoitées ont été affectées à des colons qu'il n'aime pas. 

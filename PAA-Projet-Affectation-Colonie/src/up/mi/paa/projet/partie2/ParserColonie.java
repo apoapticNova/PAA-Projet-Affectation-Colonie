@@ -267,6 +267,7 @@ public class ParserColonie {
 		            }
 					if(ligne.startsWith("preferences"))
 					{
+						String [] preferences = recupererPreferences(ligne);
 						
 					}
 				}
@@ -315,7 +316,7 @@ public class ParserColonie {
 	public static void main(String[]args)
 	{
 		try {
-			System.out.println(constructionColonieFichier("D:\\chaker_zakaria\\Universite_Licence\\Universite_Paris_Cite\\L3_info\\S5\\Colonie.txt"));
+			System.out.println(constructionColonieFichier("CheminAccessFichier"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
