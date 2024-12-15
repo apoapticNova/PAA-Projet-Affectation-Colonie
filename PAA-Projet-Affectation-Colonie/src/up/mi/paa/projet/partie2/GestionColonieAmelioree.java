@@ -40,7 +40,7 @@ public class GestionColonieAmelioree {
 	 */
 	public static void main(String[] args) {
 		//Dans un premier temps, on veut pouvoir récupérer le chemin d'un fichier dans args[0]
-		//Si il n'y en a pas, on peut demander à l'utilisateur d'en entrer un ou directement passer à la partie 1
+		//Si il n'y en a pas, on peut directement passer à la partie 1 ou demander à l'utilisateur d'entrer un chemin
 		
 		try {
 			String cheminFichier = args[0];

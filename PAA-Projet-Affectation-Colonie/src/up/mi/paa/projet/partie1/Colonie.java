@@ -290,6 +290,16 @@ public class Colonie {
 				sb.append(" ").append(enConflit.getNom());
 			}
 		}
+		
+		if (affectation.size() == this.taille) {
+			sb.append("\n\nAffectation actuelle :\n");
+			for(int i = 0; i < affectation.size(); i++) {
+				sb.append("Ressource ");
+				sb.append(i);
+				sb.append(" : ");
+				sb.append(affectation.get(i));
+			}
+		}
 		return sb.toString();
 	}
 	
