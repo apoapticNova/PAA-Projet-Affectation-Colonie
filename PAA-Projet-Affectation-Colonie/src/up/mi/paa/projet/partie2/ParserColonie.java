@@ -59,21 +59,21 @@ public class ParserColonie {
 	                throw new Exception("Erreur: Mot mal saisi ou inconnu. Ligne: "+ligne);
 	            
 	            if(ligne.startsWith("colon")) {
-	                String colon = recupererColon(ligne);
+	                String colon = parserColon(ligne);
 	                if(!colons.add(colon)) {
 	                    throw new Exception("Erreur: colon deja saisi (il ne peut pas y avoir de doublons) : "+ligne);
 	                }
 	                nbColons++;
 	            }
 	            else if(ligne.startsWith("ressource")) {
-	                String ressource = recupererRessources(ligne);
+	                String ressource = parserRessources(ligne);
 	                if(!ressources.add(ressource)) {
 	                    throw new Exception("Erreur: ressource deja saisie (il ne peut pas y avoir de doublons) : "+ligne);
 	                }
 	                nbRessources++;
 	            }
 	            else if(ligne.startsWith("deteste")) {
-	                String [] elements = recupererDeteste(ligne);
+	                String [] elements = parserRelation(ligne);
 	                if(!colons.contains(elements[0]) || !colons.contains(elements[1])) {
 	                    throw new Exception("Erreur: le(s) colon(s) saisi(s) est/sont inconnu ou mal saisi. Ligne: "+ligne);
 	                }
@@ -83,7 +83,7 @@ public class ParserColonie {
 	            }
 	            else if(ligne.startsWith("preferences"))
 	            {
-	                String [] tab = recupererPreferences(ligne);
+	                String [] tab = parserPreferences(ligne);
 	                if (tab.length != (nbColons + 1)) {
 	                    throw new Exception("Erreur: le nombre de preferences doit etre egal a n+1 (n = nombre de colons). Ligne: " + ligne);
 	                }
@@ -137,7 +137,7 @@ public class ParserColonie {
 	 * @return chaine colon
 	 * @throws Exception
 	 */
-	public static String recupererColon(String ligne) throws Exception {
+	public static String parserColon(String ligne) throws Exception {
 	    if (ligne.startsWith("colon(") && ligne.endsWith(").")) {
 	    	String colon = ligne.split("\\(")[1].split("\\)")[0].replaceAll("\\.$", "");
 	        if (colon.isEmpty()) {
@@ -159,7 +159,7 @@ public class ParserColonie {
 	 * @return chaine ressource
 	 * @throws Exception
 	 */
-	public static String recupererRessources(String ligne) throws Exception {
+	public static String parserRessources(String ligne) throws Exception {
 	    if (ligne.startsWith("ressource(") && ligne.endsWith(").")) {
 	    	String ressource = ligne.split("\\(")[1].split("\\)")[0].replaceAll("\\.$", "");
 	        if (ressource.isEmpty()) {
@@ -180,7 +180,7 @@ public class ParserColonie {
 	 * @return tableau de chaine deteste
 	 * @throws Exception
 	 */
-	public static String [] recupererDeteste(String ligne) throws Exception {
+	public static String [] parserRelation(String ligne) throws Exception {
 	    if (ligne.startsWith("deteste(") && ligne.endsWith(").")) {
 	    	String chaine = ligne.split("\\(")[1].split("\\)")[0];
 	        String [] elements = chaine.split(",");
@@ -205,7 +205,7 @@ public class ParserColonie {
 	 * @return tableau de chaine preferences
 	 * @throws Exception
 	 */
-	public static String [] recupererPreferences(String ligne) throws Exception {
+	public static String [] parserPreferences(String ligne) throws Exception {
 	    if (ligne.startsWith("preferences(") && ligne.endsWith(").")) {
 	        String [] tab = ligne.substring("preferences(".length(), ligne.length() - 2).trim().split(",");
 	        if (tab.length == 0) {
@@ -216,6 +216,7 @@ public class ParserColonie {
 	        throw new Exception("Erreur: ligne non valide: " + ligne);
 	    }
 	}
+	
 	/**
 	 * Apres avoir validé la coherence du fichier texte entré en parametre. Il nous sera possible de construire la colonie sans soucier de verifications supplémentaires et don éviter d'alourdir le code.
 	 * - La méthode perettera de retourner une colonie construite en fonction du fichier texte
@@ -226,8 +227,7 @@ public class ParserColonie {
 	 * @return
 	 * @throws Exception
 	 */
-	
-	public static Colonie constructionColonieFichier(String cheminAcces) throws Exception
+	public static Colonie parserColonie(String cheminAcces) throws Exception
 	{
 		Colonie colonie = null;
 		List<String> listeColons = null;
@@ -242,7 +242,7 @@ public class ParserColonie {
 				{
 					if (ligne.startsWith("colon")) 
 					{
-						String colon = recupererColon(ligne);
+						String colon = parserColon(ligne);
 	                    listeColons.add(colon);
 	                }
 					else
@@ -262,13 +262,13 @@ public class ParserColonie {
 				{
 					if (ligne.startsWith("deteste")) 
 					{
-						String [] relation = recupererDeteste(ligne);
+						String [] relation = parserRelation(ligne);
 		                colonie.ajouterRelation(colonie.chercherColonViaNom(relation[0]), colonie.chercherColonViaNom(relation[1]));
 		            }
 					if(ligne.startsWith("preferences"))
 					{
-						String [] preferences = recupererPreferences(ligne);
-						
+						String [] preferences = parserPreferences(ligne);
+						//TODO
 					}
 				}
 			}	
@@ -311,16 +311,6 @@ public class ParserColonie {
 			System.err.println(erreur.getMessage());
 		}
 		return nbColons;
-	}
-	
-	public static void main(String[]args)
-	{
-		try {
-			System.out.println(constructionColonieFichier("CheminAccessFichier"));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 }

@@ -296,13 +296,11 @@ public class GestionColonie {
 	/**
 	 * Point d'entrée pour la partie 1 du projet.
 	 */
-	public static void partie1_main() {
+	public static void partie1_main(Scanner sc) {
 		affichageDebut();
-		Scanner sc = new Scanner(System.in);
 		GestionColonie gC = new GestionColonie(sc);
 		gC.gestionColonie(sc);
 		System.out.println(gC.toString());
-		sc.close();
 	}
 
 }
