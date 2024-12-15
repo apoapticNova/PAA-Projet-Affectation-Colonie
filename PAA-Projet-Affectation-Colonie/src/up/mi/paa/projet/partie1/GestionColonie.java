@@ -294,9 +294,9 @@ public class GestionColonie {
 	}
 
 	/**
-	 * main provisoire qui permet pour le moment de réaliser les tests. Un main sera de toute façon utilisé pour faire fonctionner l'interface user.
+	 * Point d'entrée pour la partie 1 du projet.
 	 */
-	public static void main(String[] args) {
+	public static void partie1_main() {
 		affichageDebut();
 		Scanner sc = new Scanner(System.in);
 		GestionColonie gC = new GestionColonie(sc);

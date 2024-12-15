@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-
+import up.mi.paa.projet.partie1.GestionColonie;
 import up.mi.paa.projet.partie2.Colonie.Colon;
 
 
@@ -18,11 +18,11 @@ import up.mi.paa.projet.partie2.Colonie.Colon;
  * @author Julie Colliere
  * @author Zakaria Chaker
  */
-public class GestionColonie {
+public class GestionColonieAmelioree {
 
 	private Colonie colonie;
 
-	public GestionColonie(Scanner sc) {
+	public GestionColonieAmelioree(Scanner sc) {
 		this.colonie = new Colonie(saisieTailleColonie(sc));
 	}
 
@@ -297,17 +297,15 @@ public class GestionColonie {
 	 * main provisoire qui permet pour le moment de réaliser les tests. Un main sera de toute façon utilisé pour faire fonctionner l'interface user.
 	 */
 	public static void main(String[] args) {
-		/**
-		affichageDebut();
-		 
-		Scanner sc = new Scanner(System.in);
-		GestionColonie gC = new GestionColonie(sc);
-		gC.gestionColonie(sc);
-		System.out.println(gC.toString());
-		sc.close();
+		//Dans un premier temps, on veut pouvoir récupérer le chemin d'un fichier dans args[0]
+		//Si il n'y en a pas, on peut demander à l'utilisateur d'en entrer un ou directement passer à la partie 1
 		
-		**/
-	    //test si fichier valide 
+		try {
+			String cheminFichier = args[0];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			GestionColonie.partie1_main(); //Passage direct à la partie 1
+		}
+		
 		try {
 			System.out.println(ParserColonie.fichierTexteValide("CheminAcces"));
 		} catch (Exception e) {
