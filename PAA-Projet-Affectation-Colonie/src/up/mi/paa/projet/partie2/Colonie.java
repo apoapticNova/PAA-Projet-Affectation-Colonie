@@ -76,6 +76,12 @@ public class Colonie {
 			throw new IllegalArgumentException("Taille initiale de colonie non Valide: "+nomColons.size());
 		}
 		this.taille = nomColons.size();
+		this.affectation = new ArrayList<Colon>(); 
+		this.relations = new HashMap<Colon, HashSet<Colon>>();
+		for(String c: nomColons)
+		{
+			relations.put(new Colon(c), new HashSet<Colon>());
+		}
 		
 	}
 
@@ -288,17 +294,18 @@ public class Colonie {
 		sb.append("Colonie de taille: ");
 		sb.append(this.taille);
 		sb.append("\nListe des colons: ");
+
 		for(Colon colon : relations.keySet()) {
 			//Sauter une ligne
 			sb.append("\n\n");
 			//Sur une ligne : le nom du colon et ses préférences
 			sb.append(colon.getNom());
-			sb.append("\tpréfère : ");
+			sb.append("\tprefere: ");
 			for(Integer ressource : colon.preferences) {
 				sb.append(">").append(ressource); // ">" pour la lisibilité lors d'un affichage
 			}
 			//Sur une ligne : le nom des colons qu'il n'aime pas
-			sb.append("\nN'aime pas :");
+			sb.append("\nN'aime pas: ");
 			for (Colon enConflit : relations.get(colon)) {
 				sb.append(" ").append(enConflit.getNom());
 			}

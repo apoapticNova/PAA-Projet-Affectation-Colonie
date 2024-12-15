@@ -227,7 +227,7 @@ public class ParserColonie {
 	 * @throws Exception
 	 */
 	
-	public Colonie constructionColonieFichier(String cheminAcces) throws Exception
+	public static Colonie constructionColonieFichier(String cheminAcces) throws Exception
 	{
 		Colonie colonie = null;
 		List<String> listeColons = null;
@@ -244,16 +244,33 @@ public class ParserColonie {
 					{
 						String colon = recupererColon(ligne);
 	                    listeColons.add(colon);
-	                }}
-					if(listeColons.size()>0)
-					{
-						colonie = new Colonie(listeColons);
-					}
+	                }
 					else
 					{
-						throw new Exception("Aucun colon trouve dans le fichier texte");
+						break;
 					}
 				}
+				if(listeColons.size()>0)
+				{
+					colonie = new Colonie(listeColons);
+				}
+				else
+				{
+					throw new Exception("Aucun colon trouve dans le fichier texte");
+				}
+				while ((ligne = br.readLine()) != null) 
+				{
+					if (ligne.startsWith("deteste")) 
+					{
+						String [] relation = recupererDeteste(ligne);
+		                colonie.ajouterRelation(colonie.chercherColonViaNom(relation[0]), colonie.chercherColonViaNom(relation[1]));
+		            }
+					if(ligne.startsWith("preferences"))
+					{
+						
+					}
+				}
+			}	
 				else
 				{
 					System.err.println("Syntaxe fichier non valide");	
@@ -298,7 +315,7 @@ public class ParserColonie {
 	public static void main(String[]args)
 	{
 		try {
-			System.out.println(getNbColonsFichier("D:\\chaker_zakaria\\Universite_Licence\\Universite_Paris_Cite\\L3_info\\S5\\Colonie.txt"));
+			System.out.println(constructionColonieFichier("D:\\chaker_zakaria\\Universite_Licence\\Universite_Paris_Cite\\L3_info\\S5\\Colonie.txt"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
