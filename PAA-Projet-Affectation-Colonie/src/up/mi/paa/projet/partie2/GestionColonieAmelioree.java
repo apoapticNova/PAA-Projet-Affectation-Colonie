@@ -21,8 +21,8 @@ import up.mi.paa.projet.partie1.GestionColonie;
  */
 public class GestionColonieAmelioree {
 	
-	private static final String SAVEPATH_DEFAULT = "savedata" + File.pathSeparator + "affectation.txt";
-	private static final String READPATH_DEFAULT = "savedata" + File.pathSeparator + "colonie.txt";
+	private static final String SAVEPATH_DEFAULT = "savedata" + File.separator + "affectation.txt";
+	private static final String READPATH_DEFAULT = "savedata" + File.separator + "colonie.txt";
 	private static Colonie colonie;
 	
 	/**
@@ -36,7 +36,7 @@ public class GestionColonieAmelioree {
 	private static Colonie charger(String filePath) {
 		System.out.println("Chargement de votre colonie...");
 		Colonie colonie = ParserColonie.parser(filePath.isEmpty()?READPATH_DEFAULT:filePath);
-		System.out.println("Colonie chargée.");
+		System.out.println("Colonie chargee.");
 		return colonie;
 	}
 	
@@ -50,7 +50,7 @@ public class GestionColonieAmelioree {
 		System.out.println("Indiquez un chemin de sauvegarde (par défaut si vide : savedata/affectation.txt) : ");
 		String filePath = sc.nextLine();
 		boolean reussie = SauvegardeColonie.sauvegarderAffectation(colonie, filePath.isEmpty()?SAVEPATH_DEFAULT:filePath);
-		System.out.println(reussie?"Sauvegarde reussie.":"La sauvegarde a échoué");
+		System.out.println(reussie?"Sauvegarde reussie.":"La sauvegarde a echoue");
 	}
 	
 	/**
