@@ -87,6 +87,7 @@ public class Colonie {
 		if (colons.size() != ressources.size()) 
 			throw new IllegalArgumentException("Il doit y avoir autant de colons que de ressources");
 		
+		this.taille = colons.size();
 		affectation = new ArrayList<Colon>();
 		this.ressources = ressources;
 		relations = new HashMap<Colon, HashSet<Colon>>();

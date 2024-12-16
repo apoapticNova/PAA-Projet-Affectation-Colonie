@@ -47,7 +47,7 @@ public class GestionColonieAmelioree {
 	 * @param sc scanner pour obtenir le chemin de la part de l'utilisateur
 	 */
 	private static void sauvegarderSolution(Scanner sc) {
-		System.out.println("Indiquez un chemin de sauvegarde (par défaut si vide : savedata/affectation.txt) : ");
+		System.out.println("Indiquez un chemin de sauvegarde (par defaut si vide : savedata/affectation.txt) : ");
 		String filePath = sc.nextLine();
 		boolean reussie = SauvegardeColonie.sauvegarderAffectation(colonie, filePath.isEmpty()?SAVEPATH_DEFAULT:filePath);
 		System.out.println(reussie?"Sauvegarde reussie.":"La sauvegarde a echoue");
@@ -67,14 +67,14 @@ public class GestionColonieAmelioree {
 			case 1:
 				algorithmeApproximatif(colonie.getTaille()*2);
 				System.out.println("Fini.");
-				afficherCoutSolution();
 				choix = 0;
 				break;
 			case 2:
-				//TODO: PAS ENCORE IMPLEMENTE
+				algorithmeAuNomProvisoir();
+				System.out.println("Pas encore implemente !");
+				choix = 0;
 				break;
 			case 0:
-				afficherCoutSolution();
 				break;
 			default:
 				System.err.println("Choix incorrect");
@@ -158,6 +158,13 @@ public class GestionColonieAmelioree {
 				affectation = colonie.getAffectation();
 			}
 		}
+	}
+	
+	/**
+	 * TODO
+	 */
+	private static void algorithmeAuNomProvisoir() {
+		
 	}
 
 	/**

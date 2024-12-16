@@ -21,6 +21,7 @@ public class SauvegardeColonie {
 				Ressource ressource = colonie.getRessources().get(colonie.getAffectation().indexOf(colon));
 				pW.println(colon + ":" + ressource);
 			}
+			sauvegardeReussie = true;
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}

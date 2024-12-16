@@ -17,13 +17,13 @@ public class ParserColonie {
 		Colonie colonie = null;
 		try (BufferedReader reader = new BufferedReader(new FileReader(cheminFichier))) {
 			String ligne = null;
-
+			int etape = 0;
+			
 			ArrayList<Colon> colons = new ArrayList<>();
 			ArrayList<Ressource> ressources = new ArrayList<>();
 			
 			while ((ligne = reader.readLine()) != null) {
 				if(ligne.matches("^(colon|ressource|deteste|preferences)\\((\\w+,)*\\w+\\)\\.$")) {
-					int etape = 0;
 					switch(ligne.substring(0, ligne.indexOf("("))) {
 					
 					case "colon":
@@ -52,7 +52,7 @@ public class ParserColonie {
 							colonie = new Colonie(colons, ressources);
 						}
 						if (etape == 2) {
-							if (ligne.matches("^.+\\(\\w+,\\w+\\)\\.$)")) {
+							if (ligne.matches("^.+\\(\\w+,\\w+\\)\\.$")) {
 								String[] relation = parserRelation(ligne);
 								Colon colon1 = colonie.chercherColonViaNom(relation[0]);
 								Colon colon2 = colonie.chercherColonViaNom(relation[1]);
@@ -71,7 +71,7 @@ public class ParserColonie {
 							if (colonie == null) colonie = new Colonie(colons, ressources);
 						}
 						if (etape == 3) {
-							if (ligne.matches("^.+\\(\\w+(,\\w+){"+(colonie.getTaille()+1)+"}\\)\\.$")) {
+							if (ligne.matches("^.+\\(\\w+(,\\w+){" + colonie.getTaille() + "}\\)\\.$")) {
 								String[] donnees = parserPreferences(ligne);
 								Colon colon = colonie.chercherColonViaNom(donnees[0]);
 								ArrayList<Ressource> preferences = new ArrayList<Ressource>();
