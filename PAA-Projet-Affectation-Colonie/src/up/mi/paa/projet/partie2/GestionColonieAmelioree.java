@@ -3,6 +3,8 @@ package up.mi.paa.projet.partie2;
 import java.io.File;
 import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.util.Random;
+import java.util.List;
 
 import up.mi.paa.projet.partie1.GestionColonie;
 
@@ -19,6 +21,8 @@ import up.mi.paa.projet.partie1.GestionColonie;
  */
 public class GestionColonieAmelioree {
 	
+	private static final String SAVEPATH_DEFAULT = "savedata" + File.pathSeparator + "affectation.txt";
+	private static final String READPATH_DEFAULT = "savedata" + File.pathSeparator + "colonie.txt";
 	private static Colonie colonie;
 	
 	/**
@@ -30,13 +34,9 @@ public class GestionColonieAmelioree {
 	 * @return la colonie telle que décrite par le fichier
 	 */
 	private static Colonie charger(String filePath) {
-		//TODO
-		try {
-			System.out.println(ParserColonie.fichierTexteValide(filePath));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		Colonie colonie = null;
+		System.out.println("Chargement de votre colonie...");
+		Colonie colonie = ParserColonie.parser(filePath.isEmpty()?READPATH_DEFAULT:filePath);
+		System.out.println("Colonie chargée.");
 		return colonie;
 	}
 	
@@ -44,31 +44,13 @@ public class GestionColonieAmelioree {
 	 * Sauvegarde la solution d'affectation trouvée dans un fichier dont le chemin 
 	 * est donné par l'utilisateur
 	 * 
-	 * <p> Le chemin doit être différent de celui du fichier décrivant la colonie
-	 * 
 	 * @param sc scanner pour obtenir le chemin de la part de l'utilisateur
 	 */
 	private static void sauvegarderSolution(Scanner sc) {
-		sc.nextLine();
-		System.out.println("Indiquez un chemin de sauvegarde (laissez vide pour enregistrer dans savedata/affectation.txt) : ");
+		System.out.println("Indiquez un chemin de sauvegarde (par défaut si vide : savedata/affectation.txt) : ");
 		String filePath = sc.nextLine();
-		
-		/* Pour simplifier, on vérifie seulement que le chemin ne pointe pas vers un fichier
-		 * existant (pour être sûr de ne pas écraser celui de la colonie)
-		 */
-		try {
-			while (new File(filePath).isFile()) {
-				System.err.println("Ce fichier existe deja. L'écrasement n'est pas pris en charge.");
-				sc.nextLine();
-				System.out.println("Indiquez un chemin de sauvegarde (laissez vide pour enregistrer dans savedata/affectation.txt) : ");
-				filePath = sc.nextLine();
-			}
-			SauvegardeColonie.sauvegarderAffectation(colonie, filePath);
-		} catch (NullPointerException e) {
-			SauvegardeColonie.sauvegarderAffectation(colonie, "savedata" + File.pathSeparator + "affectation.txt");
-		}
-
-		System.out.println("Sauvegarde reussie.");
+		boolean reussie = SauvegardeColonie.sauvegarderAffectation(colonie, filePath.isEmpty()?SAVEPATH_DEFAULT:filePath);
+		System.out.println(reussie?"Sauvegarde reussie.":"La sauvegarde a échoué");
 	}
 	
 	/**
@@ -83,12 +65,16 @@ public class GestionColonieAmelioree {
 			choix = lireEntier(sc, "Choisir algorithme : ");
 			switch (choix) {
 			case 1:
-				//TODO
+				algorithmeApproximatif(colonie.getTaille()*2);
+				System.out.println("Fini.");
+				afficherCoutSolution();
+				choix = 0;
 				break;
 			case 2:
-				//TODO
+				//TODO: PAS ENCORE IMPLEMENTE
 				break;
 			case 0:
+				afficherCoutSolution();
 				break;
 			default:
 				System.err.println("Choix incorrect");
@@ -100,7 +86,11 @@ public class GestionColonieAmelioree {
 	 * Affiche le coût de l'affectation actuelle de la colonie (si elle existe)
 	 */
 	private static void afficherCoutSolution() {
-		//TODO
+		if (colonie.getAffectation().contains(null) || colonie.getAffectation().size() < colonie.getTaille()) {
+			System.err.println("Impossible de calculer le cout de la solution actuelle");
+		} else {
+			System.out.println("Cout de la solution actuelle : " + colonie.coutAffectation());
+		}
 	}
 	
 	/**
@@ -118,6 +108,7 @@ public class GestionColonieAmelioree {
 				System.out.print(message);
 				nb = sc.nextInt();
 				entierLu = true;
+				sc.nextLine();
 			} catch (InputMismatchException e) {
 				System.err.println("Entrez un entier");
 				sc.nextLine();
@@ -142,6 +133,31 @@ public class GestionColonieAmelioree {
 		System.out.println("1) Algorithme approximatif (document projet)");
 		System.out.println("2) PAS ENCORE IMPLEMENTE");
 		System.out.println("0) Retour");
+	}
+	
+	/**
+	 * Implémentation de l'algorithme approximatif (naïf) tel que décrit dans le document
+	 * de la partie 2 du projet
+	 * 
+	 * @param k nombre d'échanges de ressources avant l'arrêt de l'algorithme
+	 */
+	private static void algorithmeApproximatif(int k) {
+		Random rng = new Random();
+		colonie.affectationNaive();
+		List<Colon> affectation = colonie.getAffectation();
+		for (int i = 0; i < k; i++) {
+			Colon colon1 = affectation.get(rng.nextInt(colonie.getTaille()));
+			Colon colon2 = null;
+			while(colon1 == (colon2 = affectation.get(rng.nextInt(colonie.getTaille()))));
+			
+			int cout = colonie.coutAffectation();
+			colonie.echangerRessources(colon1, colon2);
+			if (cout <= colonie.coutAffectation()) {
+				colonie.setAffectation(affectation);
+			} else {
+				affectation = colonie.getAffectation();
+			}
+		}
 	}
 
 	/**

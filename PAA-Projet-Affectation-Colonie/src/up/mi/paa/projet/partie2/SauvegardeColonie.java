@@ -7,29 +7,23 @@ import java.io.PrintWriter;
 
 
 public class SauvegardeColonie {
-
-	/**
-	 * Sauvegarde une colonie dans un fichier texte
-	 * 
-	 * @param colonie instance de colonie à sauvegarder
-	 * @param filePath chemin du fichier
-	 */
-	public static void sauvegarder(Colonie colonie, String filePath) {
-		//TODO: FACULTATIF
-	}
 	
 	/**
-	 * Sauvegarde une solution (affecation) trouvée pour une colonie dans un fichier texte
+	 * Sauvegarde une solution (affectation) trouvée pour une colonie dans un fichier texte
 	 * 
 	 * @param colonie instance de colonie à sauvegarder
 	 * @param filePath chemin du fichier
 	 */
-	public static void sauvegarderAffectation(Colonie colonie, String filePath) {
+	public static boolean sauvegarderAffectation(Colonie colonie, String filePath) {
+		boolean sauvegardeReussie = false;
 		try (PrintWriter pW = new PrintWriter(new BufferedWriter(new FileWriter(filePath)))){
-			//TODO
+			for (Colon colon : colonie.getAffectation()) {
+				Ressource ressource = colonie.getRessources().get(colonie.getAffectation().indexOf(colon));
+				pW.println(colon + ":" + ressource);
+			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
-			System.exit(1); //TODO: Pas sûr de garder ça
 		}
+		return sauvegardeReussie;
 	}
 }

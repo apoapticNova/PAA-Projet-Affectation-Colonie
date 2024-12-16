@@ -4,313 +4,162 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ParserColonie {
-	
-	/**
-	 * Pour que le fichier texte soit valide, le fichier doit respecter un ordre précis.
-	 * - Il faudra définir d'abord le(s) colon(s) -> les ressources -> la relation potentielle entre deux colons -> les preferences.
-	 * - Pour qu'il soit valide il faut avoir 0 fautes d'orthographe et 0 saut de ligne.
-	 * - Autant de prereferences que de colons que ressources.
-	 * 
-	 * @param cheminAcces
-	 * @return Colonie construite depuis chemin du fichier
-	 * @throws Exception
-	 */
-	public static boolean fichierTexteValide(String cheminAcces) throws Exception {
-	    boolean valide = false;
-	    String [] collection = {"colon", "ressource", "deteste", "preferences"};
-	   
-	    Set<String> colons = new HashSet<>();
-	    Set<String> ressources = new HashSet<>();
-	    Set<String> detestes = new HashSet<>();
-	    Set<String> preferences = new HashSet<>();
-	    
-	    try(BufferedReader br = new BufferedReader(new FileReader(cheminAcces))) {
-	        String ligne = null;
-	        int ordre = 0;
-	        int nbColons = 0, nbRessources = 0, nbPreferences = 0;
-	        
-	        while((ligne = br.readLine()) != null) {
-	            if(ligne.isEmpty()) {
-	                throw new Exception("Erreur: Ligne vide detectee dans le fichier texte");
-	            }
-	            
-	            if (!ligne.endsWith(".")) {
-	                throw new Exception("Erreur: Chaque ligne doit se terminer par un point. Voir ligne: " + ligne);
-	            }
-
-	            boolean motCle = false;
-	            for(int i=0; i<collection.length; i++) {
-	                if(ligne.startsWith(collection[i])) {
-	                    motCle = true;
-	                    if(i<ordre)
-	                        throw new Exception("Erreur: Ordre des requetes non respecte. Voir ligne: "+ligne);
-	                    
-	                    ordre = Math.max(ordre, i);
-	                    break;
-	                }
-	            }
-	            if(!motCle)
-	                throw new Exception("Erreur: Mot mal saisi ou inconnu. Ligne: "+ligne);
-	            
-	            if(ligne.startsWith("colon")) {
-	                String colon = parserColon(ligne);
-	                if(!colons.add(colon)) {
-	                    throw new Exception("Erreur: colon deja saisi (il ne peut pas y avoir de doublons) : "+ligne);
-	                }
-	                nbColons++;
-	            }
-	            else if(ligne.startsWith("ressource")) {
-	                String ressource = parserRessources(ligne);
-	                if(!ressources.add(ressource)) {
-	                    throw new Exception("Erreur: ressource deja saisie (il ne peut pas y avoir de doublons) : "+ligne);
-	                }
-	                nbRessources++;
-	            }
-	            else if(ligne.startsWith("deteste")) {
-	                String [] elements = parserRelation(ligne);
-	                if(!colons.contains(elements[0]) || !colons.contains(elements[1])) {
-	                    throw new Exception("Erreur: le(s) colon(s) saisi(s) est/sont inconnu ou mal saisi. Ligne: "+ligne);
-	                }
-	                String chaine  = (elements[0]+","+elements[1]);
-	                if(!detestes.add(chaine))
-	                    throw new Exception("Erreur: la relation existe déjà. Ligne: "+ligne);
-	            }
-	            else if(ligne.startsWith("preferences"))
-	            {
-	                String [] tab = parserPreferences(ligne);
-	                if (tab.length != (nbColons + 1)) {
-	                    throw new Exception("Erreur: le nombre de preferences doit etre egal a n+1 (n = nombre de colons). Ligne: " + ligne);
-	                }
-	               
-	                
-	                for (String colon: tab) {
-	                    if (!colons.contains(colon) && !ressources.contains(colon)) {
-	                        throw new Exception("Erreur: le parametre " + colon + " dans les preferences n'a pas deja ete declare.");
-	                    }
-	                }
-	                
-	                Set<String> preferencesSet = new HashSet<>(Arrays.asList(tab)); // Utilisation d'un Set pour détecter les doublons
-	                if (preferencesSet.size() != tab.length) {
-	                    throw new Exception("Erreur: doublon detecte dans les preferences de cette ligne: " + Arrays.toString(tab));
-	                }
-	                
-	                for (String pref : tab) {
-	                    if (!preferences.add(pref)) {
-	                       
-	                    }
-	                }
-	                nbPreferences++;
-	            }
-	        }
-
-	        if(nbColons ==0 || nbRessources==0 || nbPreferences ==0) {
-	            throw new Exception("Erreur: le fichier doit comporter au moins un colon, une ressource et une preferences");
-	        }
-	        if(nbColons != nbPreferences) {
-	            throw new Exception("Erreur: il doit y avoir autant de colons que de preferences");
-	        }
-	        if(nbColons != nbRessources) {
-	            throw new Exception("Erreur: Il doit y avoir autant de colons que de ressources");
-	        }
-	        
-	        valide = true;
-	    } catch(IOException erreur) {
-	        throw new Exception("Erreur lors de la lecture du fichier texte: " + erreur.getMessage());
-	    }
-	        
-	    return valide;
-	}
 
 	/**
-	 * Methode qui permet de recuperer le colon depuis la ligne recupérée.
-	 * - Verifie si la ligne est correcte.
-	 * - Si elle commence par colon( et se termine par une parenthese ).
-	 * - Si la ligne n'est pas correcte erreur.
+	 * Cree une colonie à partir d'un fichier texte
 	 * 
-	 * @param ligne
-	 * @return chaine colon
-	 * @throws Exception
+	 * @param cheminFichier le chemin du fichier décrivant la colonie 
+	 * @return	la nouvelle colonie créée
 	 */
-	public static String parserColon(String ligne) throws Exception {
-	    if (ligne.startsWith("colon(") && ligne.endsWith(").")) {
-	    	String colon = ligne.split("\\(")[1].split("\\)")[0].replaceAll("\\.$", "");
-	        if (colon.isEmpty()) {
-	            throw new Exception("Erreur: nom du colon manquant ou incorrect. Ligne: " + ligne);
-	        }
-	        return colon;
-	    } else {
-	        throw new Exception("Erreur: ligne non valide: " + ligne);
-	    }
-	}
-	
-	/**
-	 * Methode qui permet de recuperer la ressource depuis la ligne recupérée.
-	 * - Verifie si la ligne est correcte.
-	 * - Si elle commence par ressource( et se termine par une parenthese ).
-	 * - Si la ligne n'est pas correcte erreur.
-	 * 
-	 * @param ligne
-	 * @return chaine ressource
-	 * @throws Exception
-	 */
-	public static String parserRessources(String ligne) throws Exception {
-	    if (ligne.startsWith("ressource(") && ligne.endsWith(").")) {
-	    	String ressource = ligne.split("\\(")[1].split("\\)")[0].replaceAll("\\.$", "");
-	        if (ressource.isEmpty()) {
-	            throw new Exception("Erreur: nom de la ressource manquant ou incorect dans la ligne: " + ligne);
-	        }
-	        return ressource;
-	    } else {
-	        throw new Exception("Erreur: ligne non valide: " + ligne);
-	    }
-	}
-	/**
-	 * Methode qui permet de recuperer un tableau de chaine des relations depuis la ligne recupérée.
-	 * - Verifie si la ligne est correcte.
-	 * - Si elle commence par deteste( et se termine par une parenthese ).
-	 * - Si la ligne n'est pas correcte erreur.
-	 * 
-	 * @param ligne
-	 * @return tableau de chaine deteste
-	 * @throws Exception
-	 */
-	public static String [] parserRelation(String ligne) throws Exception {
-	    if (ligne.startsWith("deteste(") && ligne.endsWith(").")) {
-	    	String chaine = ligne.split("\\(")[1].split("\\)")[0];
-	        String [] elements = chaine.split(",");
-	        if(elements[0].equals(elements[1]))
-	        	throw new Exception("Erreur: Il doit y avoir deux colons differents qui se detestent. Ligne: "+ligne);
-	        if (elements.length != 2) {
-	            throw new Exception("Erreur: Il doit y avoir exactement deux colons dans la relation. Ligne: " + ligne);
-	        }
-	        return elements;
-	    } else {
-	        throw new Exception("Erreur: ligne non valide: " + ligne);
-	    }
-	}
-	
-	/**
-	 * Methode qui permet de recuperer un tableau de chaine des preferences depuis la ligne recupérée.
-	 * - Verifie si la ligne est correcte.
-	 * - Si elle commence par preferences( et se termine par une parenthese ).
-	 * - Si la ligne n'est pas correcte erreur.
-	 * 
-	 * @param ligne
-	 * @return tableau de chaine preferences
-	 * @throws Exception
-	 */
-	public static String [] parserPreferences(String ligne) throws Exception {
-	    if (ligne.startsWith("preferences(") && ligne.endsWith(").")) {
-	        String [] tab = ligne.substring("preferences(".length(), ligne.length() - 2).trim().split(",");
-	        if (tab.length == 0) {
-	            throw new Exception("Erreur: les preferences ne peuvent pas être vides. Ligne: " + ligne);
-	        }
-	        return tab;
-	    } else {
-	        throw new Exception("Erreur: ligne non valide: " + ligne);
-	    }
-	}
-	
-	/**
-	 * Apres avoir validé la coherence du fichier texte entré en parametre. Il nous sera possible de construire la colonie sans soucier de verifications supplémentaires et don éviter d'alourdir le code.
-	 * - La méthode perettera de retourner une colonie construite en fonction du fichier texte
-	 * - La verification des elements entrés en parametre se fera ici.
-	 * - Si erreur: message erreur. 
-	 * 
-	 * @param cheminAcces
-	 * @return
-	 * @throws Exception
-	 */
-	public static Colonie parserColonie(String cheminAcces) throws Exception
-	{
+	public static Colonie parser(String cheminFichier) {
 		Colonie colonie = null;
-		List<String> listeColons = null;
-		try (BufferedReader br = new BufferedReader(new FileReader(cheminAcces))) {
-			if(fichierTexteValide(cheminAcces))
-			{
-				System.out.println("Fichier valide");
-				listeColons = new ArrayList<String>();
-				String ligne = null;
-				
-				while ((ligne = br.readLine()) != null) 
-				{
-					if (ligne.startsWith("colon")) 
-					{
-						String colon = parserColon(ligne);
-	                    listeColons.add(colon);
-	                }
-					else
-					{
+		try (BufferedReader reader = new BufferedReader(new FileReader(cheminFichier))) {
+			String ligne = null;
+
+			ArrayList<Colon> colons = new ArrayList<>();
+			ArrayList<Ressource> ressources = new ArrayList<>();
+			
+			while ((ligne = reader.readLine()) != null) {
+				if(ligne.matches("^(colon|ressource|deteste|preferences)\\((\\w+,)*\\w+\\)\\.$")) {
+					int etape = 0;
+					switch(ligne.substring(0, ligne.indexOf("("))) {
+					
+					case "colon":
+						if (etape != 0) {
+							throw new IOException("Ligne incorrecte, colon inattendu : " + ligne);
+						}
+						if (ligne.matches("^.+\\(\\w+\\)\\.$")) {
+							colons.add(parserColon(ligne));
+						} else throw new IOException("Ligne incorrecte, trop d'arguments (max 1) : " + ligne);
 						break;
+						
+					case "ressource":
+						if (etape == 0 && colons.size() > 0) {
+							etape++;
+						}
+						if (etape == 1 && colons.size() > ressources.size()) {
+							if (ligne.matches("^.+\\(\\w+\\)\\.$")) {
+								ressources.add(parserRessource(ligne));
+							} else throw new IOException("Ligne incorrecte, trop d'arguments (max 1) : " + ligne);
+						} else throw new IOException("Ligne incorrecte, ressource inattendue : " + ligne);
+						break;
+					
+					case "deteste":
+						if (etape == 1 && colons.size() == ressources.size()) {
+							etape++;
+							colonie = new Colonie(colons, ressources);
+						}
+						if (etape == 2) {
+							if (ligne.matches("^.+\\(\\w+,\\w+\\)\\.$)")) {
+								String[] relation = parserRelation(ligne);
+								Colon colon1 = colonie.chercherColonViaNom(relation[0]);
+								Colon colon2 = colonie.chercherColonViaNom(relation[1]);
+								try {
+									colonie.ajouterRelation(colon1, colon2);
+								} catch (IllegalArgumentException e) {
+									throw new IOException("Ligne incorrecte, colons invalides pour ajout de relation : " + ligne, e);
+								}
+							} else throw new IOException("Ligne incorrecte, pas assez/trop d'arguments (attendu : 2) : " + ligne);
+						} else throw new IOException("Ligne incorrecte, relation inattendue : " + ligne);
+						break;
+					
+					case "preferences":
+						if (etape >= 1 && colons.size() == ressources.size()) {
+							etape = 3;
+							if (colonie == null) colonie = new Colonie(colons, ressources);
+						}
+						if (etape == 3) {
+							if (ligne.matches("^.+\\(\\w+(,\\w+){"+(colonie.getTaille()+1)+"}\\)\\.$")) {
+								String[] donnees = parserPreferences(ligne);
+								Colon colon = colonie.chercherColonViaNom(donnees[0]);
+								ArrayList<Ressource> preferences = new ArrayList<Ressource>();
+								if (colon == null) {
+									throw new IOException("Ligne incorrecte, colon inconnu : " + ligne);
+								}
+								for (int i = 1; i < donnees.length; i++) {
+									Ressource ressource = colonie.chercherRessourceViaNom(donnees[i]);
+									if (ressource == null) {
+										throw new IOException("Ligne incorrecte, ressource inconnue : " + ligne);
+									}
+									preferences.add(ressource);
+								}
+								try {
+									colonie.ajouterPreferences(colon, preferences);
+								} catch (IllegalArgumentException e) {
+									throw new IOException("Ligne incorrecte, liste de préférences incomplète : " + ligne,e);
+								}
+							} else throw new IOException("Ligne incorrecte, pas assez/trop d'arguments (attendu : " + (colonie.getTaille()+1) + ") : " + ligne);
+						} else throw new IOException("Ligne incorrecte, preferences inattendues : " + ligne);
+						break;
+						
+					default:
+						throw new IOException("Unexpected regex edge-case (you're not supposed to see this) : " + ligne);
 					}
-				}
-				if(listeColons.size()>0)
-				{
-					colonie = new Colonie(listeColons);
-				}
-				else
-				{
-					throw new Exception("Aucun colon trouve dans le fichier texte");
-				}
-				while ((ligne = br.readLine()) != null) 
-				{
-					if (ligne.startsWith("deteste")) 
-					{
-						String [] relation = parserRelation(ligne);
-		                colonie.ajouterRelation(colonie.chercherColonViaNom(relation[0]), colonie.chercherColonViaNom(relation[1]));
-		            }
-					if(ligne.startsWith("preferences"))
-					{
-						String [] preferences = parserPreferences(ligne);
-						//TODO
-					}
-				}
-			}	
-				else
-				{
-					System.err.println("Syntaxe fichier non valide");	
-				}
-		}catch(Exception erreur)
-		{
-			System.err.println(erreur.getMessage());
+				} else throw new IOException("Ligne incorrecte : " + ligne);
+			}
+			
+			if (!colonie.preferencesCompletes()) {
+				throw new IOException("Erreur durant le chargement de la colonie, pas assez de lignes 'preferences(...)' pour une colonie de taille : " + colonie.getTaille());
+			}
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
 		}
 		return colonie;
 	}
+	
+	
 	/**
-	 * Méthode qui permet de retourner le nombre de colons contenu dans notre fichier texte. Cette méthode verifie en amont d'abord si le fichier est valide afin de pouvoir effectuer la construction de la colonie de maniere sereine.
+	 * Cree un colon à partir d'une ligne
 	 * 
-	 * @param cheminAcces
-	 * @return nbColons trouvé dans fichier Texte
-	 * @throws Exception
+	 * <p>Format d'une ligne décrivant un colon : "{@code colon(nom_colon).}"
+	 * 
+	 * @param ligne chaine contenant les données décrivant le colon (nom)
+	 * @return chaine colon
 	 */
-	public static int getNbColonsFichier(String cheminAcces) throws Exception
-	{
-		int nbColons = 0;
-		if (!fichierTexteValide(cheminAcces)) 
-		{
-			throw new Exception("Fichier invalide");
-		}
-		try(BufferedReader br = new BufferedReader(new FileReader(cheminAcces))) 
-		{
-			String ligne;
-			while ((ligne = br.readLine()) != null) 
-			{
-				if (ligne.startsWith("colon")) 
-				{
-					nbColons++;
-				}
-			}
-		}catch(Exception erreur)
-		{
-			System.err.println(erreur.getMessage());
-		}
-		return nbColons;
+	public static Colon parserColon(String ligne) {
+	    String nom = ligne.split("\\(")[1].split("\\)")[0];
+	    return new Colon(nom);
 	}
-
+	
+	/**
+	 * Cree une ressource à partir d'une ligne
+	 * 
+	 * <p>Format d'une ligne décrivant une ressource : "{@code ressource(nom_ressource).}"
+	 * 
+	 * @param ligne chaine décrivant la ressource
+	 * @return la nouvelle ressource créée
+	 */
+	public static Ressource parserRessource(String ligne) {
+	    String nom = ligne.split("\\(")[1].split("\\)")[0];
+	    return new Ressource(nom);
+	}
+	
+	/**
+	 * Cree une 'relation' (couple de deux colons) à partir d'une ligne
+	 * 
+	 * <p>Format d'une relation : "{@code deteste(nom_colon1,nom_colon2)}"
+	 * 
+	 * @param ligne chaine décrivant la relation
+	 * @return tableau de longueur 2 contenant les deux noms de colons de la relation
+	 */
+	public static String [] parserRelation(String ligne) {
+	    String[] noms = ligne.split("\\(")[1].split("\\)")[0].split(",");
+	    return noms;
+	}
+	
+	/**
+	 * Cree une liste de préférences à partir d'une ligne
+	 * 
+	 * <p>Format d'une liste de préférences : "{@code preferences(nom_colon,nom_ressource1,nom_ressource2,...).}"
+	 * 
+	 * @param ligne chaine décrivant la liste de préférences
+	 * @return tableau de chaines, le premier element est le colon et ceux qui suivent sa liste de préférences
+	 */
+	public static String [] parserPreferences(String ligne) {
+	    String[] donnees = ligne.split("\\(")[1].split("\\)")[0].split(",");
+	    return donnees;
+	}
 }
