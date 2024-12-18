@@ -60,7 +60,7 @@ public class Colonie {
 		}
 		else {
 			for(int i = 0; i<taille; i++) {
-				relations.put(new Colon("C"+i+1), new HashSet<Colon>());
+				relations.put(new Colon("C"+i), new HashSet<Colon>());
 			}
 		}
 		
@@ -209,7 +209,7 @@ public class Colonie {
 	 */
 	public void echangerRessources(Colon c1, Colon c2) throws IllegalArgumentException {
 		if (!affectation.contains(c1) || !affectation.contains(c2)) {
-			throw new IllegalArgumentException("Ne peut pas faire l'échange : ressource non affectée");
+			throw new IllegalArgumentException("Ne peut pas faire l'echange: ressource non affectee");
 		}
 		
 		int ressource_c1 = affectation.indexOf(c1);
@@ -280,12 +280,12 @@ public class Colonie {
 			sb.append("\n\n");
 			//Sur une ligne : le nom du colon et ses préférences
 			sb.append(colon.getNom());
-			sb.append("\tpréfère : ");
+			sb.append("\tprefere: ");
 			for(Integer ressource : colon.preferences) {
 				sb.append(">").append(ressource); // ">" pour la lisibilité lors d'un affichage
 			}
 			//Sur une ligne : le nom des colons qu'il n'aime pas
-			sb.append("\nN'aime pas :");
+			sb.append("\nN'aime pas: ");
 			for (Colon enConflit : relations.get(colon)) {
 				sb.append(" ").append(enConflit.getNom());
 			}
@@ -294,7 +294,7 @@ public class Colonie {
 		if (affectation.size() == this.taille) {
 			sb.append("\n\nAffectation actuelle :\n");
 			for(int i = 0; i < affectation.size(); i++) {
-				sb.append("Ressource ");
+				sb.append("\nRessource ");
 				sb.append(i);
 				sb.append(" : ");
 				sb.append(affectation.get(i));
@@ -357,4 +357,5 @@ public class Colonie {
 			return sb.toString();
 		}
 	}
+	
 }

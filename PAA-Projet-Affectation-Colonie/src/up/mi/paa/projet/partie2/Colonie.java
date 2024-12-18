@@ -53,9 +53,12 @@ public class Colonie {
 	 * @param	taille la taille de la colonie
 	 */
 	public Colonie(int taille) { 
-		if (taille < 0) {
+		if (taille < 0)
+		{
 			this.taille = 0;
-		} else {
+		} 
+		else 
+		{
 			this.taille = taille;
 		}
 		
@@ -65,8 +68,10 @@ public class Colonie {
 		if (this.taille <= 26) {
 			creerColonsAlphabet();
 		}
-		else {
-			for(int i = 0; i < this.taille; i++) {
+		else 
+		{
+			for(int i = 0; i < this.taille; i++) 
+			{
 				relations.put(new Colon("C"+i), new HashSet<Colon>());
 			}
 		}
@@ -88,7 +93,7 @@ public class Colonie {
 			throw new IllegalArgumentException("Il doit y avoir autant de colons que de ressources");
 		
 		this.taille = colons.size();
-		affectation = new ArrayList<Colon>();
+		affectation = colons;
 		this.ressources = ressources;
 		relations = new HashMap<Colon, HashSet<Colon>>();
 		for(Colon colon : colons) {
@@ -117,6 +122,10 @@ public class Colonie {
 	 */
 	public HashMap<Colon, HashSet<Colon>> getRelations() {
 		return this.relations;
+	}
+	
+	public void  setRelations(HashMap<Colon, HashSet<Colon>> relations) {
+		this.relations = relations;
 	}
 	
 	/**
@@ -243,7 +252,7 @@ public class Colonie {
 	 */
 	public void echangerRessources(Colon c1, Colon c2) throws IllegalArgumentException {
 		if (!affectation.contains(c1) || !affectation.contains(c2)) {
-			throw new IllegalArgumentException("Ne peut pas faire l'échange : ressource non affectée");
+			throw new IllegalArgumentException("Ne peut pas faire l'échange: ressource non affectée");
 		}
 		
 		int ressource_c1 = affectation.indexOf(c1);
@@ -312,11 +321,13 @@ public class Colonie {
 	}
 	
 	public List<Ressource> getRessources() {
-		return ressources;
+		return this.ressources;
 	}
-	
+	public void setRessources(List<Ressource> r)
+	{	this.ressources = r;
+	}
 	public List<Colon> getAffectation() {
-		return affectation;
+		return this.affectation;
 	}
 	
 	public void setAffectation(List<Colon> affectation) {

@@ -59,10 +59,10 @@ public class ParserColonie {
 								try {
 									colonie.ajouterRelation(colon1, colon2);
 								} catch (IllegalArgumentException e) {
-									throw new IOException("Ligne incorrecte, colons invalides pour ajout de relation : " + ligne, e);
+									throw new IOException("Ligne incorrecte, colons invalides pour ajout de relation: " + ligne, e);
 								}
-							} else throw new IOException("Ligne incorrecte, pas assez/trop d'arguments (attendu : 2) : " + ligne);
-						} else throw new IOException("Ligne incorrecte, relation inattendue : " + ligne);
+							} else throw new IOException("Ligne incorrecte, pas assez/trop d'arguments (attendu : 2): " + ligne);
+						} else throw new IOException("Ligne incorrecte, relation inattendue: " + ligne);
 						break;
 					
 					case "preferences":
@@ -76,7 +76,7 @@ public class ParserColonie {
 								Colon colon = colonie.chercherColonViaNom(donnees[0]);
 								ArrayList<Ressource> preferences = new ArrayList<Ressource>();
 								if (colon == null) {
-									throw new IOException("Ligne incorrecte, colon inconnu : " + ligne);
+									throw new IOException("Ligne incorrecte, colon inconnu: " + ligne);
 								}
 								for (int i = 1; i < donnees.length; i++) {
 									Ressource ressource = colonie.chercherRessourceViaNom(donnees[i]);
@@ -95,13 +95,13 @@ public class ParserColonie {
 						break;
 						
 					default:
-						throw new IOException("Unexpected regex edge-case (you're not supposed to see this) : " + ligne);
+						throw new IOException("Unexpected regex edge-case (you're not supposed to see this): " + ligne);
 					}
-				} else throw new IOException("Ligne incorrecte : " + ligne);
+				} else throw new IOException("Ligne incorrecte: " + ligne);
 			}
 			
 			if (!colonie.preferencesCompletes()) {
-				throw new IOException("Erreur durant le chargement de la colonie, pas assez de lignes 'preferences(...)' pour une colonie de taille : " + colonie.getTaille());
+				throw new IOException("Erreur durant le chargement de la colonie, pas assez de lignes 'preferences(...)' pour une colonie de taille: " + colonie.getTaille());
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -162,4 +162,5 @@ public class ParserColonie {
 	    String[] donnees = ligne.split("\\(")[1].split("\\)")[0].split(",");
 	    return donnees;
 	}
+	
 }

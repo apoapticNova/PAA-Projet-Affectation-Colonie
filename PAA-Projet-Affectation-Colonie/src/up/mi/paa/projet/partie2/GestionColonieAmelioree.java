@@ -2,6 +2,9 @@ package up.mi.paa.projet.partie2;
 
 import java.io.File;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.List;
@@ -62,7 +65,7 @@ public class GestionColonieAmelioree {
 		int choix;
 		do {
 			menuAlgorithmes();
-			choix = lireEntier(sc, "Choisir algorithme : ");
+			choix = lireEntier(sc, "Choisir algorithme: ");
 			switch (choix) {
 			case 1:
 				algorithmeApproximatif(colonie.getTaille()*2);
@@ -71,7 +74,7 @@ public class GestionColonieAmelioree {
 				break;
 			case 2:
 				algorithmeAuNomProvisoir();
-				System.out.println("Pas encore implemente !");
+				System.out.println("Pas encore implemente! ");
 				choix = 0;
 				break;
 			case 0:
@@ -181,7 +184,8 @@ public class GestionColonieAmelioree {
 		try {
 			colonie = charger(args[0]);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			GestionColonie.partie1_main(sc);
+			//GestionColonie.partie1_main(sc);
+			colonie = restaureColonie(GestionColonie.partie1_main(sc));
 		}
 		
 		int choix;
@@ -204,6 +208,59 @@ public class GestionColonieAmelioree {
 		} while (choix !=3);
 
 		sc.close();
+	}
+	
+	public static Colonie restaureColonie(up.mi.paa.projet.partie1.Colonie col)
+	{
+
+		HashMap<up.mi.paa.projet.partie1.Colonie.Colon, HashSet<up.mi.paa.projet.partie1.Colonie.Colon>> relations;
+		relations = col.getRelations();
+		
+		HashMap<up.mi.paa.projet.partie1.Colonie.Colon, Colon> mappingColons = new HashMap<>();
+		for (up.mi.paa.projet.partie1.Colonie.Colon colonPartie1 : relations.keySet()) {
+	        Colon colonPartie2 = new Colon(colonPartie1.getNom());
+	        colonPartie2.setPreferences(new ArrayList<>());
+	        mappingColons.put(colonPartie1, colonPartie2);
+	    }	
+
+		
+		//Relations
+		HashMap<Colon, HashSet<Colon>> relationsPartie2 = new HashMap<>();
+	    for (var entry : relations.entrySet()) {
+	        Colon colonPartie2 = mappingColons.get(entry.getKey());
+	        HashSet<Colon> relationsColon = new HashSet<>();
+	        for (up.mi.paa.projet.partie1.Colonie.Colon voisin : entry.getValue()) {
+	            relationsColon.add(mappingColons.get(voisin));
+	        }
+	        relationsPartie2.put(colonPartie2, relationsColon);
+	    }
+
+	    // Création des ressources pour la colonie partie 2
+	    int tailleColonie = relations.size();
+	    List<Ressource> ressourcesPartie2 = new ArrayList<>();
+	    for(int i=0; i<tailleColonie; i++)
+	    	ressourcesPartie2.add(new Ressource("R"+i));
+	    
+	   
+
+	    for (up.mi.paa.projet.partie1.Colonie.Colon colonPartie1 : relations.keySet()) {
+	        Colon colonPartie2 = mappingColons.get(colonPartie1);
+	        ArrayList<Integer> indicesPreferences = colonPartie1.getPreferences();
+	        ArrayList<Ressource> preferencesPartie2 = new ArrayList<>();
+	        for (Integer index : indicesPreferences) {
+	            if (index >= 0 && index < ressourcesPartie2.size()) {
+	                preferencesPartie2.add(ressourcesPartie2.get(index));
+	            }
+	        }
+	        colonPartie2.setPreferences(preferencesPartie2);
+	    }
+
+	    // Création de la colonie partie 2
+	    List<Colon> colonsPartie2 = new ArrayList<>(mappingColons.values());
+	    Colonie coloniePartie2 = new Colonie(colonsPartie2, ressourcesPartie2);
+	    coloniePartie2.setRelations(relationsPartie2);
+
+	    return coloniePartie2;
 	}
 
 }

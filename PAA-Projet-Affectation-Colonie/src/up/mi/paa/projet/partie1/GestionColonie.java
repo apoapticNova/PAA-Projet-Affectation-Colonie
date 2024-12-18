@@ -43,7 +43,8 @@ public class GestionColonie {
 		System.out.println("2) afficher le nombre de colons jaloux;");
 		System.out.println("3) Fin. (Quitter le programme)");
 	}
-
+	{}
+	
 	/**
 	 * Ajoute le nombre de colons dans la colonie. Verifie le type entré et le
 	 * nombre de colons saisi.
@@ -55,15 +56,12 @@ public class GestionColonie {
 	public static int saisieTailleColonie(Scanner saisie) {
 		int n = -1;
 		while (n <= 0) {
-			System.out.println("Saisir la taille de la colonie. Attention pour cette premiere version la capacite maximale est de 26 colons:");
+			System.out.println("Saisir la taille de la colonie: ");
 			try {
 				n = saisie.nextInt();
 				if (n <= 0)
 					System.err.println("Erreur: La colonie ne peut pas avoir une taille inferieure a 0. ");
-				else if (n > 26) {
-					System.err.println("Erreur: La colonie a une capacite limitee a 26...");
-					n = 0;
-				}
+
 			} catch (InputMismatchException erreur) {
 				System.err.println("Attention. Saisir un nombre entier.");
 				saisie.nextLine();
@@ -134,7 +132,7 @@ public class GestionColonie {
 					break;
 
 				case 2:
-					System.out.println(colonie.coutAffectation() + " colons jaloux");
+					System.out.println("\n"+colonie.coutAffectation() + " colons jaloux\n");
 					break;
 
 				case 3:
@@ -163,19 +161,21 @@ public class GestionColonie {
 	 * @param saisie
 	 * @return vrai ou faux si la methode se passe bien ou pas necessaire pour le switch case principal...
 	 */
+	
+
 	public void relationsEntreColons(Scanner saisie) {
 		try {
 			// Recherche du premier colon
-			Colon colon1 = saisirColon(saisie, "Saisir le nom du colon de depart :");
+			Colon colon1 = saisirColon(saisie, ("Saisir le nom du colon de depart "+ ((this.colonie.getTaille() > 26)?"(Syntaxe colon: C1, C2, ..., Cn. Taille > 26): ": "(Syntaxe colon: A, B, ..., Z. Taille <26): ")));
 			// Recherche du deuxième colon
-			Colon colon2 = saisirColon(saisie, "Saisir le nom de l'autre colon, qui ne l'aime pas :");
+			Colon colon2 = saisirColon(saisie, "Saisir le nom de l'autre colon, qui ne l'aime pas: ");
 			
 			//Pour arriver ici le programme aura forcément trouvé deux colons dans la même colonie
 			//Le seul cas à considérer est celui où les deux colons sont identiques (si ajouterRelation retourne false)
 			if(colonie.ajouterRelation(colon1, colon2)) {
-				System.out.println("Relation ajoutee !");
+				System.out.println("Relation ajoutee!");
 			} else {
-				System.out.println("Cette relation existe deja");
+				System.out.println("Cette relation existe deja.");
 			}
 		} catch (IllegalArgumentException e) {
 			System.err.println(e.getMessage());
@@ -194,13 +194,17 @@ public class GestionColonie {
 		ArrayList<Integer> preferences = new ArrayList<Integer>();
 		// Saisir les preferences d'un colon Ex: A 1 2 3 4
 		// Verifier qu'il y a bien exactement n ressources correspondant à n colons
-		do {
-			System.out.println("Saisir les preferences dans l'ordre separees d'un espace, numerotees en partant de 0 inclu. Exemple : 0 1 2");
+
+		do 
+		{
+			System.out.println("Saisir les preferences dans l'ordre separees d'un espace, numerotees en partant de 0 inclu. Exemple: 0 1 2. Si saisie non valide saut a ligne puis saisir les preferences comme exigé ici.");
 			System.out.println("Attention il doit y avoir exactement " + colonie.getTaille() + " ressources.\n");
 			saisie.nextLine(); //pour une raison inconnue si on ne fait pas nextLine() ici la prochaine instruction s'exécute une première fois sans attendre d'entrée utilisateur
-			String[] tabPreferences = saisie.nextLine().split(" ", colonie.getTaille()); //StringTokenizer déprécié -> String::split est préféré, on obtient un tableau de String de taille max colonie.taille
+			String scan = saisie.nextLine().trim();
+			String [] tabPreferences = scan.split("\\s+"); //StringTokenizer déprécié -> String::split est préféré.
+
 			if (new HashSet<String>(Arrays.asList(tabPreferences)).size() == colonie.getTaille()) { //Génère un HashSet sur le tas pour vérifier l'unicité des valeurs
-				preferences.clear(); // si des mauvaises valeurs ont été entrées à une étape précédente de la boucle, réinitialise la liste
+				preferences.clear(); //Si des mauvaises valeurs ont été entrées à une étape précédente de la boucle, réinitialise la liste
 				try {
 					//à partir de là on sait que les valeurs de tabPreferences sont toutes uniques, reste à savoir si elles sont valides
 					//RAPPEL: Entree valide = k in [0;colonie.taille[ <=> colonie.taille ressources
@@ -219,7 +223,10 @@ public class GestionColonie {
 		} while (preferences.size() != colonie.getTaille());
 
 		return preferences;
+		
 	}
+	
+
 	
 	/**
 	 * A l'aide des informations entrées par l'utilisateur, trouve un colon, appelle
@@ -228,17 +235,17 @@ public class GestionColonie {
 	 */
 	public void preferencesColons(Scanner saisie) {
 		//Recherche du colon à modifier
-		Colon colon = saisirColon(saisie, "Saisir le nom du colon :");
+		Colon colon = saisirColon(saisie, "Saisir le nom du colon (Pour rappel: "+((this.colonie.getTaille() > 26)?"(Syntaxe colon: C1, C2, ..., Cn. Taille > 26)): ": "(Syntaxe colon: A, B, ..., Z. Taille <=26)): "));
 		colonie.ajouterPreferences(colon, saisiePreferences(saisie));
 		System.out.println("Preferences ajoutees pour " + colon.toString());
 	}
 	
 	public void echangerColons(Scanner saisie) {
-		Colon colon1 = saisirColon(saisie, "Saisir le premier colon du duo à echanger");
-		Colon colon2 = saisirColon(saisie, "Saisir le deuxieme colon du duo à echanger");
+		Colon colon1 = saisirColon(saisie, "Saisir le premier colon du duo a echanger: ");
+		Colon colon2 = saisirColon(saisie, "Saisir le deuxieme colon du duo a echanger: ");
 		
 		colonie.echangerRessources(colon1, colon2);
-		System.out.println("Echange effectue !");
+		System.out.println("Echange effectue! ");
 	}
 	
 	/**
@@ -296,11 +303,12 @@ public class GestionColonie {
 	/**
 	 * Point d'entrée pour la partie 1 du projet.
 	 */
-	public static void partie1_main(Scanner sc) {
+	public static Colonie partie1_main(Scanner sc) {
 		affichageDebut();
 		GestionColonie gC = new GestionColonie(sc);
 		gC.gestionColonie(sc);
 		System.out.println(gC.toString());
+		return gC.colonie;
 	}
 
 }
