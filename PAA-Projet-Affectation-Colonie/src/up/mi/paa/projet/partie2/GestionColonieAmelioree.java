@@ -1,6 +1,7 @@
 package up.mi.paa.projet.partie2;
 
 import java.io.File;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,10 +184,18 @@ public class GestionColonieAmelioree {
 		//Si il n'y en a pas, on passe à la partie 1 
 		try {
 			colonie = charger(args[0]);
-		} catch (ArrayIndexOutOfBoundsException e) {
+			if(colonie==null)
+			{
+				System.err.println("Colonie non chargee. Fichier n existe pas ou chemin acces incorrect.");
+				System.exit(0);
+			}
+			
+		}catch (ArrayIndexOutOfBoundsException e) {
 			//GestionColonie.partie1_main(sc);
 			colonie = restaureColonie(GestionColonie.partie1_main(sc));
 		}
+		 
+		
 		
 		int choix;
 		do {
