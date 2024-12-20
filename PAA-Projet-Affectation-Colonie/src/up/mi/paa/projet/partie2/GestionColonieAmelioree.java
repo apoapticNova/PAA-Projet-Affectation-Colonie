@@ -286,7 +286,6 @@ public class GestionColonieAmelioree {
 		 * 3.c : Soustraire ce coeff aux coefficients de la sous matrice et l'ajouter aux coeffs selectionnés en ligne ET en colonne par l'étape 2.e
 		 * 3.d : Revenir à l'étape 1
 		 */
-		
 		boolean solutionOptimaleTrouvee = false;
 		do {
 			//Etape 1
@@ -303,7 +302,7 @@ public class GestionColonieAmelioree {
 			//1.a
 			ArrayList<Coefficient> encadre = new ArrayList<>();
 			ArrayList<Coefficient> barre = new ArrayList<>();
-			while (zeros.isEmpty()) {
+			while (!zeros.isEmpty()) {
 				int ligneMin = firstIndexOf(min(nombreZerosParLigne), nombreZerosParLigne);
 				for (int i = 0; i < zeros.size(); i++) {
 					if (zeros.get(i).getLigne() == ligneMin) {
