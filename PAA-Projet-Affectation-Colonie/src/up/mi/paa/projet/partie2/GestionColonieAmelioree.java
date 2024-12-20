@@ -308,12 +308,14 @@ public class GestionColonieAmelioree {
 					if (zeros.get(i).getLigne() == ligneMin) {
 						Coefficient aEncadre = zeros.remove(i);
 						encadre.add(aEncadre);
+						ArrayList<Coefficient> toRemove = new ArrayList<>();
 						for (Coefficient coef : zeros) {
 							if (coef.getLigne() == aEncadre.getLigne() || coef.getColonne() == aEncadre.getColonne()) {
 								barre.add(coef);
-								zeros.remove(coef);
+								toRemove.add(coef);
 							}
 						}
+						zeros.removeAll(toRemove);
 					}
 				}
 				nombreZerosParLigne[ligneMin] = Integer.MAX_VALUE;
@@ -434,7 +436,13 @@ public class GestionColonieAmelioree {
 	 * Retourne le minimum d'une liste d'entiers naturels
 	 */
 	private static int min(int[] liste) {
-		int min = liste[0];
+		int min;
+		try {
+			min = liste[0];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println("Liste vide!");
+			return Integer.MAX_VALUE;
+		}
 		for (int i = 1; i < liste.length; i++) {
 			if (min>liste[i]) min = liste[i];
 			if (min == 0) break;
